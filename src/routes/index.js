@@ -21,6 +21,6 @@ export const routes = [
   },
   {
     path: '*',
-    page: NotFoundPage,   //sử dụng cho sai đường link sẽ hiện
+    page: NotFoundPage,
   }
 ];

@@ -21,7 +21,6 @@ export const WrapperHeaderAccout = styled.div`
   gap: 10px;
   font-size: 12px;
 `
-// khi 1 cái gì đó đại diện cho thẻ nào thì styled./thẻ đó/ ví dụ dùng cho thẻ div thì styled.div
 export const WrapperTextHeaderSmall = styled.span`
   font-size: 12px;
   color: #fff;
