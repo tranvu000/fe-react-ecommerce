@@ -55,7 +55,7 @@ const NavBarComponent = () => {
       <WrapperContent>
         {renderContent('text', ['Điện thoại', 'Máy tính', 'Quần áo'])}
       </WrapperContent>
-      <WrapperContent>
+      {/* <WrapperContent>
         {renderContent('checkbox', [
           {
             value: 'a',
@@ -72,7 +72,7 @@ const NavBarComponent = () => {
       </WrapperContent>
       <WrapperContent>
         {renderContent('price', ['Giá dưới 100.000', 'Giá dưới 500.000', 'Giá dưới 1.000.000', 'Giá trên 1.000.000'])}
-      </WrapperContent>
+      </WrapperContent> */}
     </div>
   )
 };
