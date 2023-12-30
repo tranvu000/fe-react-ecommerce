@@ -5,10 +5,11 @@ import {
   WrapDiscountText,
   WrapPriceText,
   WrapReportText,
-  WrapperCardStyle
+  WrapperCardStyle,
+  WrapperStyleTextSell
 } from "./style";
 import {
-  StarOutlined,
+  StarFilled,
 } from '@ant-design/icons';
 import logoProduct from "../../assets/images/logoProduct.png"
 
@@ -37,9 +38,9 @@ const CardComponent = () => {
       <WrapReportText>
         <span style={{ marginRight: '4px'}}>
           <span>4.5</span>
-          <StarOutlined style={{ fontSize: '12px', color: 'yellow'}} />
+          <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)' }} />
         </span>
-        <span>| Đã bán 1000+</span>
+        <WrapperStyleTextSell>| Đã bán 1000+</WrapperStyleTextSell>
       </WrapReportText>
       <WrapPriceText>
         1.000.000 đ
