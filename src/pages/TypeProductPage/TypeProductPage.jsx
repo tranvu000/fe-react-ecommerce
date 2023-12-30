@@ -31,7 +31,6 @@ const TypeProductPage = () => {
       </Row>
     </div>
   )
-      // Pagination: Phân trang theo thứ tự
 };
 
 export default TypeProductPage;
