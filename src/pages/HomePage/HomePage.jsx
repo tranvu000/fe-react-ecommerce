@@ -1,6 +1,6 @@
 import React from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
-import { WrapperButtonMore, WrapperTypeProduct } from "./style";
+import { WrapperButtonMore, WrapperProducts, WrapperTypeProduct } from "./style";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import slider1 from "../../assets/images/slider1.jpg";
 import slider2 from "../../assets/images/slider2.jpg";
@@ -10,7 +10,9 @@ import NavBarComponent from "../../components/NavBarComponent/NavBarComponent";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 
 const HomePage = () => {
-  const arr = ['TV', 'Điện Thoại', 'Quần Áo', 'Thời Trang Nữ', 'Gia Dụng', 'Giày']
+  const arr = ['TV', 'Điện Thoại', 'Quần Áo', 'Thời Trang Nữ', 'Gia Dụng', 'Giày Dép Nam',
+    'Đồng Hồ', 'Sức Khỏe', 'Sắc Đẹp', 'Giày Dép Nữ', 'Xe Máy', 'Thời Trang Nam', 'Thời Trang Trẻ Em', 'Đồ Chơi'
+  ]
   return (
     <>
       <div style={{ padding: "0 120px"}}>
@@ -24,7 +26,7 @@ const HomePage = () => {
       </div>
       <div id="container" style={{ backgroundColor: "#efefef", padding: "0 120px", height: '1000px', width: '100%'}}>
         <SliderComponent arrImages={[slider1, slider2, slider3]} />
-        <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '30px', flexWrap: 'wrap' }}>
+        <WrapperProducts>
           <CardComponent />
           <CardComponent />
           <CardComponent />
@@ -35,9 +37,7 @@ const HomePage = () => {
           <CardComponent />
           <CardComponent />
           <CardComponent />
-          <CardComponent />
-          <CardComponent />
-        </div>
+        </WrapperProducts>
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
           <WrapperButtonMore textButton="Xem Thêm" type="outline" styleButton={{
             border: "1px solid rgb(11, 116, 229)",
