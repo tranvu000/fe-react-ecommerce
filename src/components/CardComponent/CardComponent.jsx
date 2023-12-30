@@ -20,7 +20,7 @@ const CardComponent = () => {
       headStyle={{ width: '200px', height: '200px'}}
       style={{ width: 200 }}
       bodyStyle={{ padding: '10px' }}
-      cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
+      cover={<img alt="example" src="https://png.pngtree.com/png-clipart/20231007/ourlarge/pngtree-iphone-15-blue-png-image_10194578.png" />}
     >
       <img
         src={logoProduct}
