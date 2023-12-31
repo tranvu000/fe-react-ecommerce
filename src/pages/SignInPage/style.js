@@ -20,4 +20,6 @@ export const WrapperContainerRight = styled.div`
 export const WrapperTextLight = styled.span`
   font-size: 13px;
   color: rgb(13, 92, 182);
+  cursor: pointer;
 `
+// cursor: pointer; sửa dụng để khi di chuột vào sẽ hiện dạng ngón tay để chọn
