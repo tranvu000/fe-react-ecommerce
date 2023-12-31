@@ -16,14 +16,14 @@ import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
 
 const HeaderComponent = () => {
   return (
-    <div>
-      <WrapperHeader gutter={16}>
-        <Col span={6}>
+    <div style={{ width: '100%', background: 'rgb(238, 77, 45)', display: 'flex', justifyContent: 'center' }}>
+      <WrapperHeader>
+        <Col span={5}>
           <WrapperTextHeader>
             Shopee
           </WrapperTextHeader>
         </Col>
-        <Col span={12}>
+        <Col span={13}>
         <ButtonInputSearch 
           size="large"
           bordered="false"
@@ -32,7 +32,7 @@ const HeaderComponent = () => {
           // onSearch={onSearch}
         />
         </Col>
-        <Col span={6} style={{ display: 'flex', gap: '20px', alignItems: 'center' }}> 
+        <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}> 
           <WrapperHeaderAccout>
             <UserOutlined style={{ fontSize: '30px' }} />
             <div>

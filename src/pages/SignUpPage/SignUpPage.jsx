@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { Image } from "antd";
-import imageLogo from "../../assets/images/logo-login.jpg"
+import imageLogo from "../../assets/images/logo-login.jpg";
+import {
+  EyeOutlined,
+  EyeInvisibleOutlined
+} from '@ant-design/icons';
 
 const SignUpPage = () => {
+  const [isShowPassword, setIsShowPassword]=useState(false);
+  const [isShowConfirmPassword, setIsShowConfirmPassword]=useState(false);
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0, 0, 0, 0.53)', height: '100vh', }}>
       <div style={{ width: '800px', height: '444px', borderRadius: '6px', background: '#fff', display: 'flex'}}>
@@ -13,8 +20,42 @@ const SignUpPage = () => {
           <h1>Xin Chào</h1>
           <span>Đăng ký và tạo tài khoản</span>
           <InputForm style={{ margin: '10px 0' }} placeholder="abc@gmail.com" />
-          <InputForm style={{ marginBottom: '10px' }} placeholder="password" />
-          <InputForm placeholder="comfirm password" />
+          <div style={{ position: 'relative' }}>
+            <span
+              style={{
+                zIndex: 10,
+                position: 'absolute',
+                top: '4px',
+                right: '8px'
+              }}
+            >{
+              isShowPassword ? (
+                <EyeOutlined />
+              ) : (
+                <EyeInvisibleOutlined />
+              )
+            }
+            </span>
+            <InputForm placeholder="password" type={ isShowPassword ? "text" : "password" } style={{ marginBottom: '10px' }}/>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <span
+              style={{
+                zIndex: 10,
+                position: 'absolute',
+                top: '4px',
+                right: '8px'
+              }}
+            >{
+              isShowConfirmPassword ? (
+                <EyeOutlined />
+              ) : (
+                <EyeInvisibleOutlined />
+              )
+            }
+            </span>
+            <InputForm placeholder="comfirm password" type={ isShowConfirmPassword ? "text" : "password" } />
+          </div>
           <ButtonComponent
             size={20}
             styleButton={{ 
