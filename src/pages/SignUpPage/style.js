@@ -9,7 +9,7 @@ export const WrapperContainerLeft = styled.div`
 
 export const WrapperContainerRight = styled.div`
   width: 300px;
-  background: rgb(238, 77, 45);
+  background: rgb(219, 238, 255);
   display: flex;
   justify-content: center;
   flex-direction: column;

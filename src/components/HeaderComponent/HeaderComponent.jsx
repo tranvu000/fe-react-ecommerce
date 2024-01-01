@@ -13,8 +13,14 @@ import {
   ShoppingCartOutlined,
 } from '@ant-design/icons';
 import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
+import { useNavigate } from "react-router-dom";
 
 const HeaderComponent = () => {
+  const navigate = useNavigate();
+  const handleNavigateLogin = () => {
+    navigate('/sign-in')
+  }
+
   return (
     <div style={{ width: '100%', background: 'rgb(238, 77, 45)', display: 'flex', justifyContent: 'center' }}>
       <WrapperHeader>
@@ -26,16 +32,16 @@ const HeaderComponent = () => {
         <Col span={13}>
         <ButtonInputSearch 
           size="large"
-          bordered="false"
           textButton="Tìm Kiếm"
           placeholder="input search text"
+          backgroundColorButton = 'rgb(238, 77, 45)'
           // onSearch={onSearch}
         />
         </Col>
         <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}> 
           <WrapperHeaderAccout>
             <UserOutlined style={{ fontSize: '30px' }} />
-            <div>
+            <div onClick={handleNavigateLogin} style={{ cursor: 'pointer' }}>
               <WrapperTextHeaderSmall>Đăng nhập/Đăng ký</WrapperTextHeaderSmall>
               <div>
                 <WrapperTextHeaderSmall>Tài khoản</WrapperTextHeaderSmall>
@@ -44,7 +50,6 @@ const HeaderComponent = () => {
             </div>
           </WrapperHeaderAccout>
           <div>
-          {/* Badge: sử dụng nhằm hiển thị số lượng giỏ hàng */}
             <Badge count={4} size="small">
               <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
             </Badge>

@@ -9,7 +9,7 @@ export const WrapperContainerLeft = styled.div`
 
 export const WrapperContainerRight = styled.div`
   width: 300px;
-  background: rgb(238, 77, 45);
+  background: rgb(219, 238, 255);
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -22,4 +22,3 @@ export const WrapperTextLight = styled.span`
   color: rgb(13, 92, 182);
   cursor: pointer;
 `
-// cursor: pointer; sửa dụng để khi di chuột vào sẽ hiện dạng ngón tay để chọn

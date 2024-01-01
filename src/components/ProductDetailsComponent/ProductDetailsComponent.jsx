@@ -82,7 +82,7 @@ const ProductDetailsComponent = () => {
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px'}}>
         <ButtonComponent
-          size={20}
+          size={40}
           styleButton={{ 
             background: '#fff',
             height: '48px',
