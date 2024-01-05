@@ -9,15 +9,25 @@ import {
   EyeInvisibleOutlined
 } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
+import * as UserService from "../../services/UserService";
+import { useMutationHooks } from "../../hooks/useMutationHook";
+import Loading from "../../components/LoadingComponent/Loading";
 
 const SignUpPage = () => {
-  const [isShowPassword, setIsShowPassword]=useState(false);
-  const [isShowConfirmPassword, setIsShowConfirmPassword]=useState(false);
-  const [email, setEmail]=useState('');
-  const [password, setPassword]=useState('');
-  const [confirmPassword, setConfirmPassword]=useState('');
-
   const navigate = useNavigate();
+
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const mutation = useMutationHooks(
+    data => UserService.signUpUser(data)
+  );
+  const { data, isLoading } = mutation;
+
+  console.log('mutation', mutation);
 
   const handleOnchangeEmail = (value) => {
     setEmail(value)
@@ -36,7 +46,11 @@ const SignUpPage = () => {
   };
 
   const handleSignUp = () => {
-    console.log('signup', email, password, confirmPassword);
+    mutation.mutate({
+      email,
+      password,
+      confirmPassword
+    })
   };
 
   return (
@@ -95,22 +109,24 @@ const SignUpPage = () => {
               onChange={handleOnchangeConfirmPassword}
             />
           </div>
-          <ButtonComponent
-            disabled={!email.length || !password.length || !confirmPassword.length}
-            onClick={handleSignUp}
-            size={40}
-            styleButton={{ 
-              background: 'rgb(255, 57, 69)',
-              height: '48px',
-              width: '100%',
-              border: 'none',
-              borderRadius: '4px',
-              margin: '26px 0 10px'
-            }}
-            styleTextButton={{ color: '#fff', fontSize:'15px', fontWeight: '700' }}
-            textButton={'Đăng Ký'}
-          >
-          </ButtonComponent>
+          {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span> }
+          <Loading isLoading={isLoading}>
+            <ButtonComponent
+              disabled={!email.length || !password.length || !confirmPassword.length}
+              onClick={handleSignUp}
+              size={40}
+              styleButton={{ 
+                background: 'rgb(255, 57, 69)',
+                height: '48px',
+                width: '100%',
+                border: 'none',
+                borderRadius: '4px',
+                margin: '26px 0 10px'
+              }}
+              styleTextButton={{ color: '#fff', fontSize:'15px', fontWeight: '700' }}
+              textButton={'Đăng Ký'}
+            ></ButtonComponent>
+          </Loading>
           <p>
             Đã có tài khoản?
             <WrapperTextLight onClick={handleNavigateSignIn}>Đăng nhập</WrapperTextLight>

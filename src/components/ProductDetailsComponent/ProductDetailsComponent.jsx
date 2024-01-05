@@ -1,10 +1,9 @@
-import { Col, Image, InputNumber, Row } from "antd";
+import { Col, Image, Row } from "antd";
 import React from "react";
 import imageProduct from "../../assets/images/imageProduct.jpg"
 import imageProductSmall from "../../assets/images/imagesmall.jpg"
 import {
   WrapperAddressProduct,
-  WrapperButtonQualityProduct,
   WrapperInputNumber,
   WrapperPriceProduct,
   WrapperPriceTextProduct,

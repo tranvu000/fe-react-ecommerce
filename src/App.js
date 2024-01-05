@@ -12,12 +12,12 @@ function App() {
   // }, []);
 
   // const fetchApi = async () => {
-  //   const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/list/product`)
+  //   const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/product/get-all`)
 
   //   return res.data
   // };
 
-  // const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi })
+  // const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi }) // dùng để cone api
 
   return (
     <div>

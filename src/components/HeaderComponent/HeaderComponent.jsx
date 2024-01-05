@@ -6,7 +6,6 @@ import {
   WrapperTextHeader,
   WrapperTextHeaderSmall
 } from "./style";
-import Search from "antd/lib/transfer/search";
 import {
   UserOutlined,
   CaretDownOutlined,
