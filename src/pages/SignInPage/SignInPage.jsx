@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
@@ -12,20 +12,43 @@ import { useNavigate } from "react-router-dom";
 import * as UserService from "../../services/UserService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../redux/slides/userSlide";
+
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword]=useState(false);
   const [email, setEmail]=useState('');
   const [password, setPassword]=useState('');
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
   const mutation = useMutationHooks(
     data => UserService.loginUser(data)
   );
-  const { data, isLoading } = mutation;
+  const { data, isLoading, isSuccess } = mutation;
 
-  console.log('mutation', mutation);
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/')
+      localStorage.setItem('access_token', data?.access_token)
+
+      if (data?.access_token) {
+        const decoded = jwtDecode(data?.access_token)
+        console.log('decoded', decoded);
+        if(decoded?.id) {
+          handleGetDetailsUser(decoded?.id, data?.access_token)
+        }
+      }
+    }
+  }, [isSuccess])
+
+  const handleGetDetailsUser = async (id, token) => {
+    const res = await UserService.getDetailsUser(id, token)
+    dispatch(updateUser({ ...res?.data, access_token: token }))
+  }
 
   const handleNavigateSignUp = () => {
     navigate('/sign-up')
@@ -79,7 +102,7 @@ const SignInPage = () => {
             />
           </div>
           { data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>} 
-          <Loading isLoading={isLoading}>
+          {/* <Loading isLoading={isLoading}> */}
             <ButtonComponent
               disabled={!email.length || !password.length}
               onClick={handleSignIn}
@@ -95,7 +118,7 @@ const SignInPage = () => {
               textButton={'Đăng Nhập'}
               styleTextButton={{ color: '#fff', fontSize:'15px', fontWeight: '700' }}
             ></ButtonComponent>
-          </Loading>
+          {/* </Loading> */}
           <p><WrapperTextLight>Quên mật khẩu?</WrapperTextLight></p>
           <p>
             Chưa có tài khoản?
