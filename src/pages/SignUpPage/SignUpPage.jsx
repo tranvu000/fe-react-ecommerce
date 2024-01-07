@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import * as UserService from "../../services/UserService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
+import * as message from "../../components/Message/Message";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -25,7 +26,17 @@ const SignUpPage = () => {
   const mutation = useMutationHooks(
     data => UserService.signUpUser(data)
   );
-  const { data, isLoading } = mutation;
+  const { data, isLoading, isSuccess, isError } = mutation;
+
+  // Sử dụng useEffect để làm thông báo đăng ký thành công hay thất bại
+  useEffect(() => {
+    if (isSuccess) {
+      message.success()
+      handleNavigateSignIn()
+    } else if (isError) {
+      message.error()
+    }
+  }, [isSuccess, isError])
 
   console.log('mutation', mutation);
 
@@ -110,7 +121,7 @@ const SignUpPage = () => {
             />
           </div>
           {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span> }
-          <Loading isLoading={isLoading}>
+          {/* <Loading isLoading={isLoading}> */}
             <ButtonComponent
               disabled={!email.length || !password.length || !confirmPassword.length}
               onClick={handleSignUp}
@@ -126,7 +137,7 @@ const SignUpPage = () => {
               styleTextButton={{ color: '#fff', fontSize:'15px', fontWeight: '700' }}
               textButton={'Đăng Ký'}
             ></ButtonComponent>
-          </Loading>
+          {/* </Loading> */}
           <p>
             Đã có tài khoản?
             <WrapperTextLight onClick={handleNavigateSignIn}>Đăng nhập</WrapperTextLight>
