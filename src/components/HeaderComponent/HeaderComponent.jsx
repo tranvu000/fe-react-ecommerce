@@ -43,15 +43,15 @@ const HeaderComponent = () => {
           <WrapperHeaderAccout>
             <UserOutlined style={{ fontSize: '30px' }} />
             { user?.name ? (
-              <div>{user.name}</div>
+              <div style={{ cursor: 'pointer' }}>{user.name}</div>
             ) : (
-            <div onClick={handleNavigateLogin} style={{ cursor: 'pointer' }}>
-              <WrapperTextHeaderSmall>Đăng nhập/Đăng ký</WrapperTextHeaderSmall>
-              <div>
-                <WrapperTextHeaderSmall>Tài khoản</WrapperTextHeaderSmall>
-                <CaretDownOutlined />
+              <div onClick={handleNavigateLogin} style={{ cursor: 'pointer' }}>
+                <WrapperTextHeaderSmall>Đăng nhập/Đăng ký</WrapperTextHeaderSmall>
+                <div>
+                  <WrapperTextHeaderSmall>Tài khoản</WrapperTextHeaderSmall>
+                  <CaretDownOutlined />
+                </div>
               </div>
-            </div>
             )}
           </WrapperHeaderAccout>
           <div>

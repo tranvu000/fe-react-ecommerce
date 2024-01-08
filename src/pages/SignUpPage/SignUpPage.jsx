@@ -28,7 +28,6 @@ const SignUpPage = () => {
   );
   const { data, isLoading, isSuccess, isError } = mutation;
 
-  // Sử dụng useEffect để làm thông báo đăng ký thành công hay thất bại
   useEffect(() => {
     if (isSuccess) {
       message.success()
@@ -37,8 +36,6 @@ const SignUpPage = () => {
       message.error()
     }
   }, [isSuccess, isError])
-
-  console.log('mutation', mutation);
 
   const handleOnchangeEmail = (value) => {
     setEmail(value)
