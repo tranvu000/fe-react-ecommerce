@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Badge, Col, Popover } from "antd";
 import {
   WrapperContentPopup,
@@ -23,6 +23,8 @@ const HeaderComponent = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const [userName, setUserName] = useState('');
+  const [userAvatar, setUserAvatar] = useState('')
   const [loading, setLoading] = useState(false);
 
   const handleNavigateLogin = () => {
@@ -30,16 +32,23 @@ const HeaderComponent = () => {
   };
 
   const handleLogout = async () => {
-    setLoading(true)
+    setLoading(true);
     await UserService.logoutUser();
-    dispatch(resetUser())
-    setLoading(false)
+    dispatch(resetUser());
+    setLoading(false);
   };
+
+  useEffect(() => {
+    setLoading(true);
+    setUserName(user?.name);
+    setUserAvatar(user?.avatar)
+    setLoading(false)
+  }, [user?.name, user?.avatar])
 
   const content = (
     <div>
       <WrapperContentPopup onClick={handleLogout}>Đăng xuất</WrapperContentPopup>
-      <WrapperContentPopup>Thông tin người dùng</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thông tin người dùng</WrapperContentPopup>
     </div>
   );
 
@@ -54,20 +63,30 @@ const HeaderComponent = () => {
         <Col span={13}>
         <ButtonInputSearch 
           size="large"
+          bordered={false}
           textButton="Tìm Kiếm"
           placeholder="input search text"
-          backgroundColorButton = 'rgb(238, 77, 45)'
+          // backgroundColorButton = 'rgb(238, 77, 45)'
           // onSearch={onSearch}
         />
         </Col>
         <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center' }}> 
           <Loading isLoading={loading}>
             <WrapperHeaderAccout>
+              {userAvatar ? (
+                <img src={userAvatar} alt="avatar" style={{
+                  height: '30px',
+                  width: '30px',
+                  borderRadius: '50%',
+                  objectFit: 'cover'
+              }}/>
+              ) : (
               <UserOutlined style={{ fontSize: '30px' }} />
+              )}
               { user?.access_token ? (
                 <>
                   <Popover content={content} trigger="click">
-                    <div style={{ cursor: 'pointer' }}>{user.name}</div>
+                    <div style={{ cursor: 'pointer' }}>{userName?.length ? userName : user?.email}</div>
                   </Popover>
                 </>
               ) : (
