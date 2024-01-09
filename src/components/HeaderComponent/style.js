@@ -23,11 +23,13 @@ export const WrapperHeaderAccout = styled.div`
   color: #fff;
   gap: 10px;
 `
+
 export const WrapperTextHeaderSmall = styled.span`
   font-size: 12px;
   color: #fff;
   white-space: nowrap;
 `
+
 export const WrapperContentPopup = styled.p`
     cursor: pointer;
     &:hover {
