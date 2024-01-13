@@ -13,7 +13,9 @@ import {
 } from '@ant-design/icons';
 import logoProduct from "../../assets/images/logoProduct.png"
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+  const { countInStock, description, image, name, price, rating, type, selled, discount } = props;
+  
   return (
     <div>
       <WrapperCardStyle
@@ -33,19 +35,20 @@ const CardComponent = () => {
           top: "-1px",
           left: "-1px",
           borderTopLeftRadius: '3px'
-          }} />
-      <StyleNameProduct>Iphone</StyleNameProduct>
+        }} 
+      />
+      <StyleNameProduct>{name}</StyleNameProduct>
       <WrapReportText>
         <span style={{ marginRight: '4px'}}>
-          <span>4.5</span>
+          <span>{rating}</span>
           <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)' }} />
         </span>
-        <WrapperStyleTextSell>| Đã bán 1000+</WrapperStyleTextSell>
+        <WrapperStyleTextSell>| Đã bán {selled || 1000}+</WrapperStyleTextSell>
       </WrapReportText>
       <WrapPriceText>
-        <span style={{marginRight: '8px'}}>1.000.000 đ</span>
+        <span style={{marginRight: '8px'}}>{price}</span>
         <WrapDiscountText>
-          -6%
+          {discount || 5} %
         </WrapDiscountText>
       </WrapPriceText>
       
