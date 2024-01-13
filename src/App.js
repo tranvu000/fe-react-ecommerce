@@ -6,19 +6,23 @@ import { isJsonString } from './utils';
 import { jwtDecode } from "jwt-decode";
 import * as UserService from "./services/UserService";
 import { updateUser } from './redux/slides/userSlide';
-import { useDispatch } from "react-redux";
-import axios from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import Loading from './components/LoadingComponent/Loading';
 
 
 function App() {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
+    setIsLoading(true)
     const { decoded, storageData } = handleDecoded();
 
     if(decoded?.id) {
       handleGetDetailsUser(decoded?.id, storageData)
     }
+    setIsLoading(false)
   }, []);
 
   const handleDecoded = () => {
@@ -51,21 +55,23 @@ function App() {
   }
   return (
     <div>
-      <Router>
-        <Routes>
-          {routes.map((route) => {
-            const Page = route.page
-            const Layout = route.isShowHeader ? DefaultComponent : Fragment
-            return (
-              <Route key={route.path} path={route.path} element={
-                <Layout>
-                  <Page />
-                </Layout>
-              } />
-            )
-          })}
-        </Routes>
-      </Router>
+      <Loading isLoading={isLoading}>
+        <Router>
+          <Routes>
+            {routes.map((route) => {
+              const Page = route.page
+              const Layout = route.isShowHeader ? DefaultComponent : Fragment
+              return (
+                <Route key={route.path} path={route.path} element={
+                  <Layout>
+                    <Page />
+                  </Layout>
+                } />
+              )
+            })}
+          </Routes>
+        </Router>
+      </Loading>
     </div>
   )
 };
