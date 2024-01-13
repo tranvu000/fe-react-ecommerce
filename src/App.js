@@ -16,13 +16,13 @@ function App() {
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     const { decoded, storageData } = handleDecoded();
 
     if(decoded?.id) {
       handleGetDetailsUser(decoded?.id, storageData)
-    }
-    setIsLoading(false)
+    };
+    setIsLoading(false);
   }, []);
 
   const handleDecoded = () => {
