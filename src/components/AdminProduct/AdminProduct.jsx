@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader, WrapperUploadFile } from "./style";
-import { Button, Form } from "antd";
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Form, Space } from "antd";
+import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import { getBase64 } from "../../utils";
@@ -21,6 +21,11 @@ const AdminProduct = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
+
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef(null);
+
   const [stateProduct, setStateProduct] = useState({
     name: '',
     type: '',
@@ -123,19 +128,171 @@ const AdminProduct = () => {
       </div>
     );
   };
+
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    // setSearchText(selectedKeys[0]);
+    // setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    // setSearchText('');
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <InputComponent
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={`${selectedKeys[0] || ''}`}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: 'block',
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    // render: (text) =>
+    //   searchedColumn === dataIndex ? (
+    //     <Highlighter
+    //       highlightStyle={{
+    //         backgroundColor: '#ffc069',
+    //         padding: 0,
+    //       }}
+    //       searchWords={[searchText]}
+    //       autoEscape
+    //       textToHighlight={text ? text.toString() : ''}
+    //     />
+    //   ) : (
+    //     text
+    //   ),
+  });
+
+
+
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
-      render: (text) => <a>{text}</a>,
+      sorter: (a, b) => a.name.length - b.name.length,
+      ...getColumnSearchProps('name')
     },
     {
       title: 'Price',
       dataIndex: 'price',
+      sorter: (a, b) => a.price - b.price,
+      filters: [
+        {
+          text: 'Dưới 100.000',
+          value: '<100000',
+        },
+        {
+          text: 'Từ 100.000 - 500.000',
+          value: '100000-500000',
+        },
+        {
+          text: 'Từ 500.000 - 2.000.000',
+          value: '500000-2000000',
+        },
+        {
+          text: 'Từ 2.000.000 - 15.000.000',
+          value: '2000000-15000000',
+        },
+        {
+          text: 'Từ 15.000.000 - 50.000.000',
+          value: '15000000-50000000',
+        },
+        {
+          text: 'Trên 50.000.000',
+          value: '>50000000',
+        },
+      ],
+      onFilter: (value, record) => {
+        const price = record.price;
+
+        if (value === '<100000') {
+          return price >= 0 && price < 100000;
+        } else if (value === '100000-500000') {
+          return price >= 100000 && price <= 500000;
+        } else if (value === '500000-2000000') {
+          return price >= 500000 && price <= 2000000;
+        } else if (value === '2000000-15000000') {
+          return price >= 2000000 && price <= 15000000;
+        } else if (value === '15000000-50000000') {
+          return price >= 15000000 && price <= 50000000;
+        } else if (value === '>50000000') {
+          return price > 50000000;
+        };
+      },
     },
     {
       title: 'Rating',
       dataIndex: 'rating',
+      sorter: (a, b) => a.rating - b.rating,
+      filters: [
+        {
+          text: 'Dưới 3',
+          value: '<3',
+        },
+        {
+          text: 'Từ 3 - 5',
+          value: '3-5',
+        },
+      ],
+      onFilter: (value, record) => {
+        const rating = record.rating;
+
+        if (value === '<3') {
+          return rating >= 0 && rating < 3;
+        } else if (value === '3-5') {
+          return rating >= 3 && rating <= 5;
+        };
+      },
     },
     {
       title: 'Type',
@@ -293,7 +450,7 @@ const AdminProduct = () => {
         }} />
       </div>
       <ModalComponent title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
-        <Loading isLoading={isLoading}>
+        {/* <Loading isLoading={isLoading}> */}
           <Form
             name="basic"
             labelCol={{ span: 6 }}
@@ -409,10 +566,10 @@ const AdminProduct = () => {
               </Button>
             </Form.Item>
           </Form>
-        </Loading>
+        {/* </Loading> */}
       </ModalComponent>
       <DrawerComponent title="Chi tiết sản phẩm" isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%" >
-        <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
+        {/* <Loading isLoading={isLoadingUpdate || isLoadingUpdated}> */}
           <Form
             name="basic"
             labelCol={{ span: 2 }}
@@ -528,12 +685,12 @@ const AdminProduct = () => {
               </Button>
             </Form.Item>
           </Form>
-        </Loading>
+        {/* </Loading> */}
       </DrawerComponent>
       <ModalComponent title="Xóa sản phẩm" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct}>
-        <Loading isLoading={isLoadingDeleted}>
+        {/* <Loading isLoading={isLoadingDeleted}> */}
           <div>Bạn có chắc xóa sản phẩm này không?</div>
-        </Loading>
+        {/* </Loading> */}
       </ModalComponent>
     </div>
   )
