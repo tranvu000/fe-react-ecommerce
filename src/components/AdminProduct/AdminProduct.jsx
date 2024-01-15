@@ -21,9 +21,6 @@ const AdminProduct = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
-
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
 
   const [stateProduct, setStateProduct] = useState({
@@ -449,7 +446,7 @@ const AdminProduct = () => {
           }
         }} />
       </div>
-      <ModalComponent title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <ModalComponent forceRender title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
         {/* <Loading isLoading={isLoading}> */}
           <Form
             name="basic"
