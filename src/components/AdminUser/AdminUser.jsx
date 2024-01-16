@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { WrapperHeader} from "./style";
+import { WrapperHeader, WrapperUploadFile} from "./style";
 import { Button, Form, Space } from "antd";
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import TableComponent from "../TableComponent/TableComponent";
@@ -23,17 +23,13 @@ const AdminUser = () => {
   const user = useSelector((state) => state?.user);
   const searchInput = useRef(null);
 
-  const [stateUser, setStateUser] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    isAdmin: false
-  });
   const [stateUserDetails, setStateUserDetails] = useState({
     name: '',
     email: '',
     phone: '',
-    isAdmin: false
+    isAdmin: false,
+    avatar: '',
+    address: ''
   });
 
   const [form] = Form.useForm();
@@ -79,7 +75,9 @@ const AdminUser = () => {
         name: res?.data?.name,
         email: res?.data?.email,
         phone: res?.data?.phone,
-        isAdmin: res?.data?.isAdmin
+        isAdmin: res?.data?.isAdmin,
+        avatar: res?.data?.avatar,
+        address: res?.data?.address,
       })
     };
     setIsLoadingUpdate(false);
@@ -244,6 +242,12 @@ const AdminUser = () => {
       ]
     },
     {
+      title: 'Address',
+      dataIndex: 'address',
+      sorter: (a, b) => a.address.length - b.address.length,
+      ...getColumnSearchProps('address')
+    },
+    {
       title: 'Action',
       dataIndex: 'action',
       render: renderAction
@@ -313,17 +317,6 @@ const AdminUser = () => {
     });
   };
 
-  const handleOnchangeAvatar = async ({fileList}) => {
-    const file = fileList[0];
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    };
-    setStateUser({
-      ...stateUser,
-      image: file.preview
-    });
-  };
-
   const handleOnchangeAvatarDetails = async ({fileList}) => {
     const file = fileList[0];
     if (!file.url && !file.preview) {
@@ -331,7 +324,7 @@ const AdminUser = () => {
     };
     setStateUserDetails({
       ...stateUserDetails,
-      image: file.preview
+      avatar: file.preview
     });
   };
 
@@ -404,33 +397,33 @@ const AdminUser = () => {
               <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" />
             </Form.Item>
 
-            {/* <Form.Item
-              label="Admin"
-              name="isAdmin"
+            <Form.Item
+              label="Address"
+              name="address"
               rules={[
                 {
                   required: true,
-                  message: 'Please input your isAdmin!'
+                  message: 'Please input your address!'
                 },
               ]}
             >
-              <InputComponent value={stateUserDetails.isAdmin} onChange={handleOnchangeDetails} name="isAdmin" />
-            </Form.Item> */}
+              <InputComponent value={stateUserDetails.address} onChange={handleOnchangeDetails} name="address" />
+            </Form.Item>
 
-            {/* <Form.Item
-              label="Image"
-              name="image"
+            <Form.Item
+              label="Avatar"
+              name="avatar"
               rules={[
                 {
                   required: true,
-                  message: 'Please input your image!'
+                  message: 'Please input your avatar!'
                 },
               ]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1}>
                 <Button>Select File</Button>
-                {stateUserDetails?.image && (
-                  <img src={stateUserDetails?.image} style={{
+                {stateUserDetails?.avatar && (
+                  <img src={stateUserDetails?.avatar} style={{
                     height: '60px',
                     width: '60px',
                     borderRadius: '50%',
@@ -439,7 +432,7 @@ const AdminUser = () => {
                   }} alt="avatar"/>
                 )}
               </WrapperUploadFile>
-            </Form.Item> */}
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Apply
