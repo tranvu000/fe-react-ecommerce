@@ -56,6 +56,15 @@ const AdminUser = () => {
     },
   );
 
+  const mutationDeletedMany = useMutationHooks(
+    (data) => {
+      const { token, ...ids } = data;
+      const res = UserService.deleteManyUser(ids, token);
+
+      return res;
+    },
+  );
+
   const getAllUsers = async () => {
     const res = await UserService.getAllUser();
 
@@ -81,18 +90,27 @@ const AdminUser = () => {
   }, [form, stateUserDetails]);
 
   useEffect(() => {
-    if (rowSelected) {
+    if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true)
       fetchGetDetailsUser(rowSelected)
     }
-  }, [rowSelected]);
+  }, [rowSelected, isOpenDrawer]);
 
   const handleDetailsUser = () => {
     setIsOpenDrawer(true)
   };
 
+  const handleDeleteManyUsers = (ids) => {
+    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+      onSettled: () => {
+        queryUser.refetch()
+      }
+    })
+  };
+
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate;
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted;
+  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany;
 
   const queryUser = useQuery({
     queryKey: ['users'],
@@ -248,6 +266,14 @@ const AdminUser = () => {
     };
   }, [isSuccessUpdated]);
 
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+      message.success()
+    } else if (isErrorDeletedMany) {
+      message.error()
+    };
+  }, [isSuccessDeletedMany]);
+
   const handleCloseDrawer = () => {
     setIsOpenDrawer(false);
     setStateUserDetails({
@@ -321,7 +347,7 @@ const AdminUser = () => {
     <div>
       <WrapperHeader>Quản lý người dùng</WrapperHeader>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyUsers} columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: event => {
               setRowSelected(record._id)
