@@ -72,11 +72,11 @@ export const WrapperButtonQualityProduct = styled.div`
 
 export const WrapperInputNumber = styled(InputNumber)`
   &.ant-input-number.ant-input-number-sm {
-    width: 60px;
+    width: 40px;
     border-top: none;
     border-bottom: none;
   };
-  &.ant-input-number-handler-wrap {
+  .ant-input-number-handler-wrap {
     display: none;
   }
 `

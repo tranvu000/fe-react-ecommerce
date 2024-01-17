@@ -15,7 +15,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
-  const searchDebounce = useDebounce(searchProduct, 1000);
+  const searchDebounce = useDebounce(searchProduct, 500);
   const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState(6);
   const [typeProducts, setTypeProducts] = useState([]);
@@ -46,55 +46,57 @@ const HomePage = () => {
   }, [])
 
   return (
-    <Loading isLoading={isLoading || loading}>
-      <div style={{ width: '1270px', margin: '0 auto' }}>
-        <WrapperTypeProduct>
-          {typeProducts.map((item) => {
-            return (
-              <TypeProduct name={item} key={item} />
-            )
-          })}
-        </WrapperTypeProduct>
-      </div>
-      <div className="body" style={{ width: '100%', backgroundColor: '#efefef' }}>
-        <div id="container" style={{ height: '1000px', width: '1270px', margin: '0 auto'}}>
-          <SliderComponent arrImages={[slider1, slider2, slider3]} />
-          <WrapperProducts>
-            {products?.data?.map((product) => {
+    <>
+      <Loading isLoading={isLoading || loading}>
+        <div style={{ width: '1270px', margin: '0 auto' }}>
+          <WrapperTypeProduct>
+            {typeProducts.map((item) => {
               return (
-                <CardComponent 
-                  key = {product._id}
-                  countInStock = {product.countInStock}
-                  description = {product.description}
-                  image = {product.image}
-                  name = {product.name}
-                  price = {product.price}
-                  rating = {product.rating}
-                  type = {product.type}
-                  selled = {product.selled}
-                  discount = {product.discount}
-                  id={product._id}
-                />
+                <TypeProduct name={item} key={item}/>
               )
             })}
-          </WrapperProducts>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <WrapperButtonMore textButton={isPreviousData ? 'Load more' : 'Xem Thêm'} type="outline" styleButton={{
-              border: "1px solid rgb(11, 116, 229)",
-              color: `${products?.total === products?.data?.length ? '#ccc' : 'rgb(11, 116, 229)'}`,
-              width: "240px",
-              height: "38px",
-              borderRadius: "4px"
-            }}
-              disabled={products?.total === products?.data?.length || products?.totalPage === 1}
-              styleTextButton={{ fontWeight: 500, color: products?.total === products?.data?.length && '#fff' }}
-              onClick={() => setLimit((prev) => prev + 6)}
-            />
-          </div>
-
+          </WrapperTypeProduct>
         </div>
-      </div>
-    </Loading>
+        <div className="body" style={{ width: '100%', backgroundColor: '#efefef' }}>
+          <div id="container" style={{ height: '1000px', width: '1270px', margin: '0 auto'}}>
+            <SliderComponent arrImages={[slider1, slider2, slider3]} />
+            <WrapperProducts>
+              {products?.data?.map((product) => {
+                return (
+                  <CardComponent 
+                    key = {product._id}
+                    countInStock = {product.countInStock}
+                    description = {product.description}
+                    image = {product.image}
+                    name = {product.name}
+                    price = {product.price}
+                    rating = {product.rating}
+                    type = {product.type}
+                    selled = {product.selled}
+                    discount = {product.discount}
+                    id={product._id}
+                  />
+                )
+              })}
+            </WrapperProducts>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+              <WrapperButtonMore textButton={isPreviousData ? 'Load more' : 'Xem Thêm'} type="outline" styleButton={{
+                border: "1px solid rgb(11, 116, 229)",
+                color: `${products?.total === products?.data?.length ? '#ccc' : 'rgb(11, 116, 229)'}`,
+                width: "240px",
+                height: "38px",
+                borderRadius: "4px"
+              }}
+                disabled={products?.total === products?.data?.length || products?.totalPage === 1}
+                styleTextButton={{ fontWeight: 500, color: products?.total === products?.data?.length && '#fff' }}
+                onClick={() => setLimit((prev) => prev + 6)}
+              />
+            </div>
+
+          </div>
+        </div>
+      </Loading>
+    </>
   )
 };
 
