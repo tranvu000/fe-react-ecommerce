@@ -39,31 +39,33 @@ const TableComponent = (props) => {
   };
   
   return (
-    <Loading isLoading={isLoading}>
-      {rowSelectedKeys.length > 0 && (
-        <div style={{
-          background: 'rgb(238, 77, 45)',
-          color: '#fff',
-          fontWeight: 'bold',
-          padding: '10px',
-          cursor: 'pointer'
-        }}
-          onClick={handleDeleteAll}
-        >
-          Xóa tất cả
-        </div>
-      )}
-      <button onClick={exportExcel}>Export Excel</button>
-      <Table
-        rowSelection={{
-          type: selectionType,
-          ...rowSelection,
-        }}
-        columns={columns}
-        dataSource={dataSource}
-        {...props}
-      />
-    </Loading>
+    <>
+      <Loading isLoading={isLoading}>
+        {rowSelectedKeys.length > 0 && (
+          <div style={{
+            background: 'rgb(238, 77, 45)',
+            color: '#fff',
+            fontWeight: 'bold',
+            padding: '10px',
+            cursor: 'pointer'
+          }}
+            onClick={handleDeleteAll}
+          >
+            Xóa tất cả
+          </div>
+        )}
+        <button onClick={exportExcel}>Export Excel</button>
+        <Table
+          rowSelection={{
+            type: selectionType,
+            ...rowSelection,
+          }}
+          columns={columns}
+          dataSource={dataSource}
+          {...props}
+        />
+      </Loading>
+    </>
   );
 };
 
