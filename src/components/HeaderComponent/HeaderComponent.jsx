@@ -27,6 +27,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [userName, setUserName] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [search, setSearch] = useState('');
+  const order = useSelector((state) => state.order);
   const [loading, setLoading] = useState(false);
 
   const handleNavigateLogin = () => {
@@ -43,9 +44,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   useEffect(() => {
     setLoading(true);
     setUserName(user?.name);
-    setUserAvatar(user?.avatar)
-    setLoading(false)
-  }, [user?.name, user?.avatar])
+    setUserAvatar(user?.avatar);
+    setLoading(false);
+  }, [user?.name, user?.avatar]);
 
   const content = (
     <div>
@@ -58,8 +59,8 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   );
 
   const onSearch = (e) => {
-    setSearch(e.target.value)
-    dispatch(searchProduct(e.target.value))
+    setSearch(e.target.value);
+    dispatch(searchProduct(e.target.value));
   };
 
   return (
@@ -114,7 +115,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           </Loading>
           {!isHiddenCart && (
             <div onClick={() => navigate('/order')} style={{cursor: 'pointer'}}>
-              <Badge count={4} size="small">
+              <Badge count={order?.orderItems?.length} size="small">
                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
               </Badge>
               <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
