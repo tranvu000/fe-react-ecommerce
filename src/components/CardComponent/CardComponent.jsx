@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import logoProduct from "../../assets/images/logoProduct.png"
 import { useNavigate } from "react-router-dom";
+import { convertPrice } from "../../utils";
 
 const CardComponent = (props) => {
   const { countInStock, description, image, name, price, rating, type, selled, discount, id } = props;
@@ -52,7 +53,7 @@ const CardComponent = (props) => {
         <WrapperStyleTextSell>| Đã bán {selled || 1000}+</WrapperStyleTextSell>
       </WrapReportText>
       <WrapPriceText>
-        <span style={{marginRight: '8px'}}>{price?.toLocaleString()}</span>
+        <span style={{marginRight: '8px'}}>{convertPrice(price)}</span>
         <WrapDiscountText>
           - {discount || 5} %
         </WrapDiscountText>
