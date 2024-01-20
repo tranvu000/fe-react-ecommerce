@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form } from 'antd';
+import { Checkbox, Form } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   WrapperCountOrder,
@@ -6,13 +6,12 @@ import {
   WrapperItemOrder,
   WrapperLeft,
   WrapperListOrder,
-  WrapperPriceDiscount,
   WrapperRight,
   WrapperStyleHeader,
   WrapperTotal
 } from './style';
 import { DeleteOutlined, MinusOutlined, PlusOutlined} from '@ant-design/icons';
-import { WrapperInputNumber, WrapperQualityProduct } from '../../components/ProductDetailsComponent/style';
+import { WrapperInputNumber } from '../../components/ProductDetailsComponent/style';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, selectedOrder } from '../../redux/slides/orderSlide';
@@ -24,6 +23,7 @@ import * as UserService from "../../services/UserService";
 import Loading from '../../components/LoadingComponent/Loading';
 import * as message from '../../components/Message/Message';
 import { updateUser } from '../../redux/slides/userSlide';
+import { useNavigate } from 'react-router-dom/dist';
 
 const OrderPage = () => {
   const order = useSelector((state) => state.order);
@@ -37,6 +37,7 @@ const OrderPage = () => {
     address: '',
     city: ''
   });
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
@@ -91,7 +92,7 @@ const OrderPage = () => {
         city: user?.city
       })
     }
-  }, [isOpenModalUpdateInfo])
+  }, [isOpenModalUpdateInfo]);
 
   const priceMemo = useMemo(() => {
     const result = order?.orderItemsSelected?.reduce((total, cur) => {
@@ -103,7 +104,6 @@ const OrderPage = () => {
 
   const priceDiscountMemo = useMemo(() => {
     const result = order?.orderItemsSelected?.reduce((total, cur) => {
-      console.log('cur', cur);
       return total + (cur.price * cur.amount * cur.discount / 100)
     }, 0);
     if (Number(result)) {
@@ -125,7 +125,11 @@ const OrderPage = () => {
 
   const totalPriceMemo = useMemo(() => {
     return Number(priceMemo) - Number(priceDiscountMemo) + Number(diliveryPriceMemo);
-  }, [priceMemo, priceDiscountMemo]);
+  }, [priceMemo, priceDiscountMemo, diliveryPriceMemo]);
+
+  const handleChangeAddress = () => {
+    setIsOpenModalUpdateInfo(true)
+  };
 
   const handleRemoveAllOrder = () => {
     if(listChecked?.length > 1){
@@ -138,7 +142,9 @@ const OrderPage = () => {
       message.error('Vui lòng chọn sản phẩm')
     } else if (!user?.phone || !user?.address || !user?.name || !user?.city) {
       setIsOpenModalUpdateInfo(true)
-    };
+    } else {
+      navigate('/payment');
+    }
   };
 
   const mutationUpdate = useMutationHooks(
@@ -239,18 +245,21 @@ const OrderPage = () => {
           <WrapperRight>
             <div style={{width: '100%'}}>
               <WrapperInfo>
+                <div>
+                  <span>Địa chỉ: </span>
+                  <span style={{fontWeight: 'bold'}}>{`${user?.address} ${user?.city}`}</span>
+                  <span onClick={handleChangeAddress} style={{color: 'blue', cursor: 'pointer'}}>Thay đổi</span>
+                </div>
+              </WrapperInfo>
+              <WrapperInfo>
                 <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                   <span>Tạm tính</span>
                   <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceMemo)}</span>
                 </div>
                 <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                   <span>Giảm giá</span>
-                  <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceDiscountMemo) > 0 ? `- ${convertPrice(priceDiscountMemo)}` : 0}</span>
+                  <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceDiscountMemo) > 0 ? `- ${convertPrice(priceDiscountMemo)}` : convertPrice(0)}</span>
                 </div>
-                {/* <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                  <span>Thuế</span>
-                  <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>0</span>
-                </div> */}
                 <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                   <span>Phí giao hàng</span>
                   <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(diliveryPriceMemo)}</span>
@@ -345,6 +354,6 @@ const OrderPage = () => {
       </ModalComponent>
     </div>
   )
-}
+};
 
-export default OrderPage
+export default OrderPage;
