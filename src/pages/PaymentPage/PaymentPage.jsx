@@ -14,6 +14,8 @@ import * as OrderService from '../../services/OrderService';
 import Loading from '../../components/LoadingComponent/Loading';
 import * as message from '../../components/Message/Message';
 import { updateUser } from '../../redux/slides/userSlide';
+import { useNavigate } from 'react-router-dom';
+import { removeAllOrderProduct } from '../../redux/slides/orderSlide';
 
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
@@ -21,6 +23,7 @@ const PaymentPage = () => {
 
   const [delivery, setDelivery] = useState('fast');
   const [payment, setPayment] = useState('later_money');
+  const navigate = useNavigate();
 
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
   const [stateUserDetails, setStateUserDetails] = useState({
@@ -54,7 +57,7 @@ const PaymentPage = () => {
   };
 
   const priceMemo = useMemo(() => {
-    const result = order?.orderItemsSlected?.reduce((total, cur) => {
+    const result = order?.orderItemsSelected?.reduce((total, cur) => {
       return total + ((cur.price * cur.amount))
     },0)
     return result
@@ -87,12 +90,12 @@ const PaymentPage = () => {
   },[priceMemo, priceDiscountMemo, diliveryPriceMemo]);
 
   const handleAddOrder = () => {
-    if(user?.access_token && order?.orderItemsSlected && user?.name
+    if(user?.access_token && order?.orderItemsSelected && user?.name
       && user?.address && user?.phone && user?.city && priceMemo && user?.id) {
         mutationAddOrder.mutate(
           { 
             token: user?.access_token, 
-            orderItems: order?.orderItemsSlected, 
+            orderItems: order?.orderItemsSelected, 
             fullName: user?.name,
             address:user?.address, 
             phone:user?.phone,
@@ -130,7 +133,20 @@ const PaymentPage = () => {
 
   useEffect(() => {
     if (isSuccess && dataAdd?.status === 'OK') {
-      message.success('Đặt hàng thành công')
+      const arrayOrdered = [];
+      order?.orderItemsSelected?.forEach(element => {
+        arrayOrdered.push(element.product)
+      });
+      dispatch(removeAllOrderProduct({listChecked: arrayOrdered}))
+      message.success('Đặt hàng thành công');
+      navigate('/orderSuccess', {
+        state: {
+          delivery,
+          payment,
+          orders: order?.orderItemsSelected,
+          totalPriceMemo: totalPriceMemo
+        }
+      });
     } else if (isError) {
       message.error()
     }
@@ -146,6 +162,7 @@ const PaymentPage = () => {
     form.resetFields()
     setIsOpenModalUpdateInfo(false)
   };
+
   const handleUpdateInforUser = () => {
     const {name, address,city, phone} = stateUserDetails;
     if(name && address && city && phone){
@@ -177,7 +194,7 @@ const PaymentPage = () => {
     <div style={{background: '#f5f5fa', with: '100%', height: '100vh'}}>
       {/* <Loading isLoading={isLoadingAddOrder}> */}
         <div style={{height: '100%', width: '1270px', margin: '0 auto'}}>
-          <h3>Thanh toán</h3>
+          <h3 style={{fontWeight: 'bold'}}>Thanh toán</h3>
           <ditoánv style={{ display: 'flex', justifyContent: 'center'}}>
             <WrapperLeft>
               <WrapperInfo>
