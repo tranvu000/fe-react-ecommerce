@@ -12,12 +12,12 @@ export const WrapperHeader = styled(Row)`
 `
 
 export const WrapperTextHeader = styled(Link)`
-  font-size: 18px;
+  font-size: 24px;
   color: #fff;
   font-weight: bold;
   text-align: left;
   &:hover {
-    font-size: 18px;
+    font-size: 25px;
     color: #fff;
   }
 `

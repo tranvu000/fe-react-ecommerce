@@ -71,7 +71,10 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         break;
     
       case 'my-order':
-        navigate('/my-order');
+        navigate('/my-order', {state: {
+          id: user?.id,
+          token: user?.access_token
+        }});
         break;
     
       default:
@@ -90,9 +93,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     <div style={{ width: '100%', heiht: '100%', background: 'rgb(238, 77, 45)', display: 'flex', justifyContent: 'center' }}>
       <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenCart ? 'space-between' : 'unset' }}>
         <Col span={5}>
-          <WrapperTextHeader>
-            Shopee
-          </WrapperTextHeader>
+          <WrapperTextHeader to='/'>Shopee</WrapperTextHeader>
         </Col>
         {!isHiddenSearch && (
           <Col span={13}>

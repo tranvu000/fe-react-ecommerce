@@ -65,7 +65,9 @@ const PaymentPage = () => {
 
   const priceDiscountMemo = useMemo(() => {
     const result = order?.orderItemsSelected?.reduce((total, cur) => {
-      return total + (cur.price * cur.amount * cur.discount / 100)
+      const totalDiscount = cur.discount ? cur.discount : 0;
+
+      return total + (priceMemo * (totalDiscount * cur.amount) / 100);
     }, 0);
     if (Number(result)) {
       return result
@@ -231,7 +233,7 @@ const PaymentPage = () => {
                   </div>
                   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <span>Giảm giá</span>
-                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceDiscountMemo) > 0 ? `- ${convertPrice(priceDiscountMemo)}` : convertPrice(0)}</span>
+                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceDiscountMemo) ? `- ${convertPrice(priceDiscountMemo)}` : convertPrice(0)}</span>
                   </div>
                   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <span>Phí giao hàng</span>
