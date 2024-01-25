@@ -116,7 +116,7 @@ const SignInPage = () => {
                 borderRadius: '4px',
                 margin: '26px 0 10px'
               }}
-              textButton={'Đăng Nhập'}
+              textbutton={'Đăng Nhập'}
               styleTextButton={{ color: '#fff', fontSize:'15px', fontWeight: '700' }}
             ></ButtonComponent>
           {/* </Loading> */}

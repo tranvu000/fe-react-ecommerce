@@ -24,7 +24,7 @@ const DetailsOrderPage = () => {
   const queryOrder = useQuery({
     queryKey: ['orders-details'],
     queryFn: fetchDetailsOrder,
-    enabled: !!id
+    config: { enabled: !!id }
   });
   const { isLoading, data } = queryOrder;
 
@@ -74,7 +74,7 @@ const DetailsOrderPage = () => {
           </div>
           {data?.orderItems?.map((order) => {
             return (
-              <WrapperProduct>
+              <WrapperProduct key={order?.image}>
                 <WrapperNameProduct>
                   <img src={order?.image} 
                     style={{

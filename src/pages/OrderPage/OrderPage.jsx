@@ -240,7 +240,7 @@ const OrderPage = () => {
             <WrapperListOrder>
               {order?.orderItems?.map((order) => {
                 return (
-                  <WrapperItemOrder>
+                  <WrapperItemOrder key={order?.product}>
                     <div style={{width: '390px', display: 'flex', alignItems: 'center', gap: 4}}> 
                       <Checkbox onChange={onChange} value={order?.product} checked={listChecked.includes(order?.product)}></Checkbox>
                       <img src={order?.image} style={{width: '77px', height: '79px', objectFit: 'cover'}}/>
@@ -260,7 +260,7 @@ const OrderPage = () => {
                           <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
                         </button>
                         <WrapperInputNumber defaultValue={order?.amount} value={order?.amount} size="small" min={1} max={order?.countInStock}/>
-                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase',order?.product, order?.amount === order?.countInStock)}>
+                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase',order?.product, order?.amount === order?.countInStock, order?.amount === 1)}>
                           <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
                         </button>
                       </WrapperCountOrder>
@@ -313,7 +313,7 @@ const OrderPage = () => {
                   border: 'none',
                   borderRadius: '4px'
               }}
-              textButton={'Mua hàng'}
+              textbutton={'Mua hàng'}
               styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
           ></ButtonComponent>
           </WrapperRight>

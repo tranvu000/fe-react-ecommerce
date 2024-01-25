@@ -80,7 +80,7 @@ const HomePage = () => {
               })}
             </WrapperProducts>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-              <WrapperButtonMore textButton={isPreviousData ? 'Load more' : 'Xem Thêm'} type="outline" styleButton={{
+              <WrapperButtonMore textbutton={isPreviousData ? 'Load more' : 'Xem Thêm'} type="outline" styleButton={{
                 border: "1px solid rgb(11, 116, 229)",
                 color: `${products?.total === products?.data?.length ? '#ccc' : 'rgb(11, 116, 229)'}`,
                 width: "240px",

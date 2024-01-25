@@ -109,7 +109,8 @@ const PaymentPage = () => {
             itemsPrice: priceMemo,
             shippingPrice: diliveryPriceMemo,
             totalPrice: totalPriceMemo,
-            user: user?.id
+            user: user?.id,
+            email: user?.email
           }
         )
       }
@@ -183,7 +184,8 @@ const PaymentPage = () => {
         totalPrice: totalPriceMemo,
         user: user?.id,
         isPaid: true,
-        paidAt: details.update_time
+        paidAt: details.update_time,
+        email: user?.email
       }
     )
   };
@@ -240,7 +242,7 @@ const PaymentPage = () => {
       {/* <Loading isLoading={isLoadingAddOrder}> */}
         <div style={{height: '100%', width: '1270px', margin: '0 auto'}}>
           <h3 style={{fontWeight: 'bold'}}>Thanh toán</h3>
-          <ditoánv style={{ display: 'flex', justifyContent: 'center'}}>
+          <div style={{ display: 'flex', justifyContent: 'center'}}>
             <WrapperLeft>
               <WrapperInfo>
                 <div>
@@ -314,12 +316,12 @@ const PaymentPage = () => {
                       border: 'none',
                       borderRadius: '4px'
                   }}
-                  textButton={'Đặt hàng'}
+                  textbutton={'Đặt hàng'}
                   styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
               ></ButtonComponent>
               )}
             </WrapperRight>
-          </ditoánv>
+          </div>
         </div>
         <ModalComponent title="Cập nhật thông tin giao hàng" open={isOpenModalUpdateInfo} onCancel={handleCancleUpdate} onOk={handleUpdateInforUser}>
           {/* <Loading isLoading={isLoading}> */}

@@ -132,7 +132,7 @@ const SignUpPage = () => {
                 margin: '26px 0 10px'
               }}
               styleTextButton={{ color: '#fff', fontSize:'15px', fontWeight: '700' }}
-              textButton={'Đăng Ký'}
+              textbutton={'Đăng Ký'}
             ></ButtonComponent>
           {/* </Loading> */}
           <p>

@@ -25,7 +25,7 @@ const MyOrderPage = () => {
   const queryOrder = useQuery({
     queryKey: ['orders'],
     queryFn: fetchMyOrder,
-    enabled: !!state?.id && !!state?.token
+    config: { enabled: !!state?.id && !!state?.token }
   });
   const { isLoading, data } = queryOrder;
 
@@ -54,8 +54,10 @@ const MyOrderPage = () => {
   const { isLoading: isLoadingDelete, isSuccess: isSuccessDelete, isError: isErrorDelete, data: dataDelete } = mutation;
 
   useEffect(() => {
-    if (isSuccessDelete && dataDelete?.state === 'OK') {
+    if (isSuccessDelete && dataDelete?.status === 'OK') {
       message.success()
+    } else if (isSuccessDelete && dataDelete?.status === 'ERR') {
+      message.error(dataDelete?.message)
     } else if (isErrorDelete) {
       message.error()
     }
@@ -64,7 +66,7 @@ const MyOrderPage = () => {
   const renderProduct = (data) => {
     return data?.map((order) => {
       return (
-        <WrapperHeaderItem>
+        <WrapperHeaderItem key={order?._id}>
           <img src={order?.image} style={{
             width: '70px', 
             height: '70px', 
@@ -117,7 +119,7 @@ const MyOrderPage = () => {
                           border: '1px solid rgb(11, 116, 229)',
                           borderRadius: '4px'
                         }}
-                        textButton={'Hủy đơn hàng'}
+                        textbutton={'Hủy đơn hàng'}
                         styleTextButton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
                       >
                       </ButtonComponent>
@@ -129,7 +131,7 @@ const MyOrderPage = () => {
                           border: '1px solid rgb(11, 116, 229)',
                           borderRadius: '4px'
                         }}
-                        textButton={'Xem chi tiết'}
+                        textbutton={'Xem chi tiết'}
                         styleTextButton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
                       >
                       </ButtonComponent>
