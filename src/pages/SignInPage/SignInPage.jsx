@@ -13,7 +13,7 @@ import * as UserService from "../../services/UserService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import { jwtDecode } from "jwt-decode";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../../redux/slides/userSlide";
 
 
@@ -23,6 +23,7 @@ const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const user  = useSelector((state) => state.user);
   const navigate = useNavigate();
 
   const mutation = useMutationHooks(

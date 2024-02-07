@@ -8,6 +8,10 @@ body {
   padding: 0;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 code {
   font-size: 62.5%;
 }

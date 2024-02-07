@@ -54,7 +54,7 @@ function App() {
     dispatch(updateUser({ ...res?.data, access_token: token }))
   }
   return (
-    <div>
+    <div style={{height: '100vh', width: '100%'}}>
       <Loading isLoading={isLoading}>
         <Router>
           <Routes>
