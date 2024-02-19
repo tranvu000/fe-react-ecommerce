@@ -11,7 +11,6 @@ import { useEffect } from 'react';
 import * as message from '../../components/Message/Message';
 
 const MyOrderPage = () => {
-  const user = useSelector((state) => state.user);
   const location = useLocation();
   const { state } = location;
   const navigate = useNavigate();
@@ -21,6 +20,7 @@ const MyOrderPage = () => {
 
     return res.data;
   };
+  const user = useSelector((state) => state.user);
 
   const queryOrder = useQuery({
     queryKey: ['orders'],
@@ -38,14 +38,14 @@ const MyOrderPage = () => {
   };
 
   const mutation = useMutationHooks((data) => {
-    const { id, token, orderItems } = data;
-    const res = OrderService.deleteOrder(id, token, orderItems);
+    const { id, token, orderItems, userId } = data;
+    const res = OrderService.deleteOrder(id, token, orderItems, userId);
 
     return res;
   });
 
   const handleDeleteOrder = (order) => {
-    mutation.mutate({ id: order?._id, token: state?.token, orderItems: order?.orderItems }, {
+    mutation.mutate({ id: order?._id, token: state?.token, orderItems: order?.orderItems, userId: user.id }, {
       onSuccess: () => {
         queryOrder.refetch()
       }
@@ -99,8 +99,14 @@ const MyOrderPage = () => {
                 <WrapperItemOrder key={order?._id}>
                   <WrapperStatus>
                     <span style={{fontSize: '14px', fontWeight: 'bold'}}>Trạng thái</span>
-                    <div><span style={{color: 'rgb(255, 66, 78)'}}>Giao hàng: </span>{`${order.isDelivered ? 'Đã giao hàng': 'Chưa giao hàng'}`}</div>
-                    <div><span style={{color: 'rgb(255, 66, 78)'}}>Thanh toán:</span>{`${order.isPaid ? 'Đã thanh toán': 'Chưa thanh toán'}`}</div>
+                    <div>
+                      <span style={{color: 'rgb(255, 66, 78)'}}>Giao hàng: </span>
+                      <span style={{color: 'rgb(90, 32, 193)', fontWeight: 'bold'}}>{`${order.isDelivered ? 'Đã giao hàng': 'Chưa giao hàng'}`}</span>
+                    </div>
+                    <div>
+                      <span style={{color: 'rgb(255, 66, 78)'}}>Thanh toán: </span>
+                      <span style={{color: 'rgb(90, 32, 193)', fontWeight: 'bold'}}>{`${order.isPaid ? 'Đã thanh toán': 'Chưa thanh toán'}`}</span>
+                    </div>
                   </WrapperStatus>
                   {renderProduct(order?.orderItems)}
                   <WrapperFooterItem>
@@ -116,11 +122,11 @@ const MyOrderPage = () => {
                         size={40}
                         styleButton={{
                           height: '36px',
-                          border: '1px solid rgb(11, 116, 229)',
+                          border: '1px solid #9255FD',
                           borderRadius: '4px'
                         }}
                         textbutton={'Hủy đơn hàng'}
-                        styleTextButton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
+                        styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
                       >
                       </ButtonComponent>
                       <ButtonComponent
@@ -128,11 +134,11 @@ const MyOrderPage = () => {
                         size={40}
                         styleButton={{
                           height: '36px',
-                          border: '1px solid rgb(11, 116, 229)',
+                          border: '1px solid #9255FD',
                           borderRadius: '4px'
                         }}
                         textbutton={'Xem chi tiết'}
-                        styleTextButton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
+                        styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
                       >
                       </ButtonComponent>
                     </div>

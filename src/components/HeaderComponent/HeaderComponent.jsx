@@ -39,6 +39,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     setLoading(true);
     await UserService.logoutUser();
     dispatch(resetUser());
+    navigate('/');
     setLoading(false);
   };
 
@@ -89,11 +90,18 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     dispatch(searchProduct(e.target.value));
   };
 
+  const orderCountForCurrentUser = order?.orderItems?.reduce((count, item) => {
+    if (item.userId === user?.id) {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+
   return (
     <div style={{ width: '100%', heiht: '100%', background: 'rgb(238, 77, 45)', display: 'flex', justifyContent: 'center' }}>
       <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenCart ? 'space-between' : 'unset' }}>
         <Col span={5}>
-          <WrapperTextHeader to='/'>Shopee</WrapperTextHeader>
+          <WrapperTextHeader to='/'>SHOP</WrapperTextHeader>
         </Col>
         {!isHiddenSearch && (
           <Col span={13}>
@@ -102,7 +110,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             bordered={false}
             textbutton="Tìm Kiếm"
             placeholder="input search text"
-            backgroundColorButton = 'rgb(238, 20, 22)'
+            backgroundcolorbutton = 'rgb(238, 20, 22)'
             onChange={onSearch}
           />
           </Col>
@@ -123,7 +131,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               { user?.access_token ? (
                 <>
                   <Popover content={content} trigger="click" open={isOpenPopup} >
-                    <div style={{ cursor: 'pointer' }} onClick={() => setIsOpenPopup((prev) => !prev)}>
+                    <div style={{ cursor: 'pointer',maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={() => setIsOpenPopup((prev) => !prev)}>
                       {userName?.length ? userName : user?.email}
                     </div>
                   </Popover>
@@ -141,7 +149,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           </Loading>
           {!isHiddenCart && (
             <div onClick={() => navigate('/order')} style={{cursor: 'pointer'}}>
-              <Badge count={order?.orderItems?.length} size="small">
+              <Badge count={orderCountForCurrentUser} size="small">
                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
               </Badge>
               <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from "./style";
+import { StyledImage, WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { Image } from "antd";
@@ -22,6 +22,7 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const mutation = useMutationHooks(
     data => UserService.signUpUser(data)
@@ -57,8 +58,13 @@ const SignUpPage = () => {
     mutation.mutate({
       email,
       password,
-      confirmPassword
+      confirmPassword,
+      isAdmin
     })
+  };
+
+  const handleClick = () => {
+    navigate('/');
   };
 
   return (
@@ -117,6 +123,28 @@ const SignUpPage = () => {
               onChange={handleOnchangeConfirmPassword}
             />
           </div>
+          <div style={{ marginTop: '10px' }}>
+            <label style={{cursor: 'pointer'}}>
+              <input
+                type="radio"
+                name="userType"
+                value="user"
+                checked={!isAdmin}
+                onChange={() => setIsAdmin(false)}
+              />
+              &nbsp;User
+            </label>
+            <label style={{ cursor: 'pointer', marginLeft: '10px' }}>
+              <input
+                type="radio"
+                name="userType"
+                value="admin"
+                checked={isAdmin}
+                onChange={() => setIsAdmin(true)}
+              />
+              &nbsp;Admin
+            </label>
+          </div>
           {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span> }
           {/* <Loading isLoading={isLoading}> */}
             <ButtonComponent
@@ -141,7 +169,7 @@ const SignUpPage = () => {
           </p>
         </WrapperContainerLeft>
         <WrapperContainerRight>
-          <Image src={imageLogo} alt="image logo" preview={false} height='203px' width='203px'/>
+          <StyledImage src={imageLogo} alt="image logo" preview={false} height='203px' width='203px' onClick={handleClick}/>
           <h4>Mua sắm tại shopee</h4>
         </WrapperContainerRight>
       </div>

@@ -100,12 +100,6 @@ const AdminProduct = () => {
     setIsLoadingUpdate(false);
   };
 
-  const fetchAllTypeProduct = async () => {
-    const res = await ProductService.getAllTypeProduct();
-
-    return res;
-  };
-
   useEffect(() => {
     if (!isModalOpen) {
       form.setFieldsValue(stateProductDetails)
@@ -131,6 +125,12 @@ const AdminProduct = () => {
         queryProduct.refetch()
       }
     })
+  };
+
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductService.getAllTypeProduct();
+
+    return res;
   };
 
   const { data, isLoading, isSuccess, isError } = mutation;
@@ -224,23 +224,7 @@ const AdminProduct = () => {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{
-    //         backgroundColor: '#ffc069',
-    //         padding: 0,
-    //       }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ''}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
   });
-
-
 
   const columns = [
     {
@@ -524,7 +508,6 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.name} onChange={handleOnchange} name="name" />
             </Form.Item>
-
             <Form.Item
               label="Type"
               name="type"
@@ -537,8 +520,6 @@ const AdminProduct = () => {
             >
               <Select
                 name="type"
-                // defaultValue="lucy"
-                // style={{width: 120}}
                 value={stateProduct.type}
                 onChange={handleChangeSelect}
                 options={renderOptions(typeProduct?.data?.data)}
@@ -558,7 +539,6 @@ const AdminProduct = () => {
                 <InputComponent value={stateProduct.newType} onChange={handleOnchange} name="newType" />
               </Form.Item>
             )}
-
             <Form.Item
               label="Count inStock"
               name="countInStock"
@@ -571,7 +551,6 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.countInStock} onChange={handleOnchange} name="countInStock" />
             </Form.Item>
-
             <Form.Item
               label="Price"
               name="price"
@@ -584,7 +563,6 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.price} onChange={handleOnchange} name="price" />
             </Form.Item>
-
             <Form.Item
               label="Description"
               name="description"
@@ -597,7 +575,6 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.description} onChange={handleOnchange} name="description" />
             </Form.Item>
-
             <Form.Item
               label="Rating"
               name="rating"
@@ -610,7 +587,6 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.rating} onChange={handleOnchange} name="rating" />
             </Form.Item>
-
             <Form.Item
               label="Discount"
               name="discount"
@@ -623,7 +599,6 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount" />
             </Form.Item>
-
             <Form.Item
               label="Image"
               name="image"

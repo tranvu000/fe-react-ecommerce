@@ -12,7 +12,7 @@ import * as message from '../../components/Message/Message';
 import { useSelector } from "react-redux";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as UserService from "../../services/UserService";
-import { useQuery } from "@tanstack/react-query";
+import { useIsFetching, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 const AdminUser = () => {
@@ -27,7 +27,7 @@ const AdminUser = () => {
     name: '',
     email: '',
     phone: '',
-    isAdmin: false,
+    isAdmin: '',
     avatar: '',
     address: ''
   });
@@ -37,16 +37,7 @@ const AdminUser = () => {
   const mutationUpdate = useMutationHooks(
     (data) => {
       const { id, token, ...rests } = data;
-      const res = UserService.updateUser(id, token, {...rests});
-
-      return res;
-    },
-  );
-
-  const mutationDeleted = useMutationHooks(
-    (data) => {
-      const { id, token } = data;
-      const res = UserService.deleteUser(id, token);
+      const res = UserService.updateUser(id, {...rests}, token);
 
       return res;
     },
@@ -61,23 +52,33 @@ const AdminUser = () => {
     },
   );
 
-  const getAllUsers = async () => {
-    const res = await UserService.getAllUser(user?.access_token);
-
-    return res;
+  const handleDeleteManyUsers = (ids) => {
+    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+      onSettled: () => {
+        queryClient.invalidateQueries(['users'])
+      }
+    })
   };
 
+  const mutationDeleted = useMutationHooks(
+    (data) => {
+      const { id, token } = data;
+      const res = UserService.deleteUser(id, token);
+
+      return res;
+    },
+  );
 
   const fetchGetDetailsUser = async (rowSelected) => {
-    const res = await UserService.getDetailsUser(rowSelected);
+    const res = await UserService.getDetailsUser(rowSelected, user?.access_token);
     if ( res?.data) {
       setStateUserDetails({
         name: res?.data?.name,
         email: res?.data?.email,
         phone: res?.data?.phone,
         isAdmin: res?.data?.isAdmin,
-        avatar: res?.data?.avatar,
         address: res?.data?.address,
+        avatar: res?.data?.avatar
       })
     };
     setIsLoadingUpdate(false);
@@ -98,23 +99,13 @@ const AdminUser = () => {
     setIsOpenDrawer(true)
   };
 
-  const handleDeleteManyUsers = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
-      onSettled: () => {
-        queryUser.refetch()
-      }
-    })
-  };
-
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate;
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted;
   const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany;
 
-  const queryUser = useQuery({
-    queryKey: ['users'],
-    queryFn: getAllUsers
-  });
-  const { isLoading: isLoadingUsers, data: users } = queryUser;
+  const queryClient = useQueryClient();
+  const users = queryClient.getQueryData(['users']);
+  const isFetchingUser = useIsFetching(['users']);
   const renderAction = () => {
     return (
       <div>
@@ -191,21 +182,7 @@ const AdminUser = () => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
-    },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{
-    //         backgroundColor: '#ffc069',
-    //         padding: 0,
-    //       }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ''}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
+    }
   });
 
   const columns = [
@@ -253,7 +230,7 @@ const AdminUser = () => {
       render: renderAction
     }
   ];
-  const dataTable = users?.data?.length && users?.data?.map((user) => {
+  const dataTable = users?.data?.length > 0 && users?.data?.map((user) => {
     return {
       ...user,
       key: user._id,
@@ -262,13 +239,13 @@ const AdminUser = () => {
   });
 
   useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === 'OK') {
+    if (isSuccessDeleted && dataDeleted?.status === 'OK') {
       message.success()
-      handleCloseDrawer()
-    } else if (isErrorUpdated) {
+      handleCancelDelete()
+    } else if (isErrorDeleted) {
       message.error()
     };
-  }, [isSuccessUpdated]);
+  }, [isSuccessDeleted]);
 
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
@@ -284,19 +261,19 @@ const AdminUser = () => {
       name: '',
       email: '',
       phone: '',
-      isAdmin: false
+      isAdmin: ''
     });
     form.resetFields();
   };
 
   useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === 'OK') {
+    if (isSuccessUpdated && dataUpdated?.status === 'OK') {
       message.success()
-      handleCancelDelete()
-    } else if (isErrorDeleted) {
+      handleCloseDrawer()
+    } else if (isErrorUpdated) {
       message.error()
     };
-  }, [isSuccessDeleted]);
+  }, [isSuccessUpdated]);
 
   const handleCancelDelete = () => {
     setIsModalOpenDelete(false)
@@ -305,7 +282,7 @@ const AdminUser = () => {
   const handleDeleteUser = () => {
     mutationDeleted.mutate({id: rowSelected, token: user?.access_token}, {
       onSettled: () => {
-        queryUser.refetch()
+        queryClient.invalidateQueries(['users'])
       }
     });
   };
@@ -331,7 +308,7 @@ const AdminUser = () => {
   const onUpdateUser = () => {
     mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetails }, {
       onSettled: () => {
-        queryUser.refetch()
+        queryClient.invalidateQueries(['users'])
       }
     });
   };
@@ -340,12 +317,12 @@ const AdminUser = () => {
     <div>
       <WrapperHeader>Quản lý người dùng</WrapperHeader>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDeleteMany={handleDeleteManyUsers} columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyUsers} columns={columns} isLoading={isFetchingUser} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: event => {
               setRowSelected(record._id)
             }
-          }
+          };
         }} />
       </div>
       <DrawerComponent title="Chi tiết người dùng" isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%" >

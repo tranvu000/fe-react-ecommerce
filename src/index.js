@@ -14,14 +14,14 @@ const queryClient = new QueryClient();
 
 root.render(
   // <React.StrictMode>
-  <QueryClientProvider client={queryClient}>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <App/>
-      </PersistGate>
-    </Provider>
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <App/>
+        </PersistGate>
+      </Provider>
+      <ReactQueryDevtools initialIsOpen={true} />
+    </QueryClientProvider>
   // </React.StrictMode>
 );
 

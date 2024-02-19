@@ -22,3 +22,10 @@ export const WrapperTextLight = styled.span`
   color: rgb(13, 92, 182);
   cursor: pointer;
 `
+
+export const StyledImage = styled.img`
+  transition: transform 0.3s ease-in-out;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+`

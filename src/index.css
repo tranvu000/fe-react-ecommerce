@@ -2,10 +2,17 @@
 @import "~slick-carousel/slick/slick-theme.css";
 @import 'antd/dist/antd.min.css';
 
+:root {
+  --primary-color: rgb(238, 77, 45);
+}
+
 body {
   margin: 0;
-  box-sizing: border-box;
   padding: 0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 code {
