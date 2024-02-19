@@ -25,8 +25,8 @@ const PaymentPage = () => {
 
   const [delivery, setDelivery] = useState('fast');
   const [payment, setPayment] = useState('later_money');
-  const [sdkReady, setSdkReady] = useState(false);
   const navigate = useNavigate();
+  const [sdkReady, setSdkReady] = useState(false);
 
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
   const [stateUserDetails, setStateUserDetails] = useState({
@@ -38,7 +38,6 @@ const PaymentPage = () => {
   const [form] = Form.useForm();
 
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     form.setFieldsValue(stateUserDetails)
@@ -62,37 +61,39 @@ const PaymentPage = () => {
   const priceMemo = useMemo(() => {
     const result = order?.orderItemsSelected?.reduce((total, cur) => {
       return total + ((cur.price * cur.amount))
-    },0)
-    return result
-  },[order]);
-
-  const priceDiscountMemo = useMemo(() => {
-    const result = order?.orderItemsSelected?.reduce((total, cur) => {
-      const totalDiscount = cur.discount ? cur.discount : 0;
-
-      return total + (priceMemo * (totalDiscount * cur.amount) / 100);
     }, 0);
-    if (Number(result)) {
-      return result
-    };
 
-    return 0;
+    return result;
   }, [order]);
 
-  const diliveryPriceMemo = useMemo(() => {
-    if (priceMemo >= 200000) {
-      return 10000
-    } else if (priceMemo > 0 && priceMemo < 200000) {
+  const priceDiscountMemo = useMemo(() => {
+    let totalDiscount = 0;
+
+    order?.orderItemsSelected?.forEach((item) => {
+      const itemDiscount = item.discount ? item.discount : 0;
+      const itemPrice = item.price * item.amount;
+      const itemTotalDiscount = (itemPrice * itemDiscount) / 100;
+      
+      totalDiscount += itemTotalDiscount;
+    });
+  
+    return totalDiscount;
+  }, [order]);
+
+  const deliveryPriceMemo = useMemo(() => {
+    if (priceMemo > 0 && priceMemo < 200000 ) {
       return 20000
-    } else {
+    } else if (priceMemo >= 200000 && priceMemo <= 500000) {
+      return 10000
+    } else if ((priceMemo === 0 && order?.orderItemsSelected?.length === 0) || priceMemo > 500000) {
       return 0
     }
   }, [priceMemo]);
 
 
   const totalPriceMemo = useMemo(() => {
-    return Number(priceMemo) - Number(priceDiscountMemo) + Number(diliveryPriceMemo)
-  },[priceMemo, priceDiscountMemo, diliveryPriceMemo]);
+    return Number(priceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo)
+  },[priceMemo, priceDiscountMemo, deliveryPriceMemo]);
 
   const handleAddOrder = () => {
     if(user?.access_token && order?.orderItemsSelected && user?.name
@@ -107,7 +108,7 @@ const PaymentPage = () => {
             city: user?.city,
             paymentMethod: payment,
             itemsPrice: priceMemo,
-            shippingPrice: diliveryPriceMemo,
+            shippingPrice: deliveryPriceMemo,
             totalPrice: totalPriceMemo,
             user: user?.id,
             email: user?.email
@@ -119,7 +120,7 @@ const PaymentPage = () => {
   const mutationUpdate = useMutationHooks(
     (data) => {
       const { id, token, ...rests } = data;
-      const res = UserService.updateUser(id, token, { ...rests });
+      const res = UserService.updateUser(id, { ...rests }, token);
 
       return res;
     },
@@ -128,8 +129,8 @@ const PaymentPage = () => {
   const mutationAddOrder = useMutationHooks(
     (data) => {
       const { token, ...rests } = data;
-      const res = OrderService.createOrder(token, { ...rests });
-      
+      const res = OrderService.createOrder({...rests}, token);
+
       return res;
     },
   );
@@ -180,7 +181,7 @@ const PaymentPage = () => {
         city: user?.city,
         paymentMethod: payment,
         itemsPrice: priceMemo,
-        shippingPrice: diliveryPriceMemo,
+        shippingPrice: deliveryPriceMemo,
         totalPrice: totalPriceMemo,
         user: user?.id,
         isPaid: true,
@@ -269,7 +270,7 @@ const PaymentPage = () => {
                   <div>
                     <span>Địa chỉ: </span>
                     <span style={{fontWeight: 'bold'}}>{ `${user?.address} ${user?.city}`} </span>
-                    <span onClick={handleChangeAddress} style={{color: 'blue', cursor:'pointer'}}>Thay đổi</span>
+                    <span onClick={handleChangeAddress} style={{color: 'rgb(238, 77, 45)', cursor:'pointer'}}>Thay đổi</span>
                   </div>
                 </WrapperInfo>
                 <WrapperInfo>
@@ -283,7 +284,7 @@ const PaymentPage = () => {
                   </div>
                   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <span>Phí giao hàng</span>
-                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(diliveryPriceMemo)}</span>
+                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(deliveryPriceMemo)}</span>
                   </div>
                 </WrapperInfo>
                 <WrapperTotal>
@@ -318,7 +319,7 @@ const PaymentPage = () => {
                   }}
                   textbutton={'Đặt hàng'}
                   styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-              ></ButtonComponent>
+                ></ButtonComponent>
               )}
             </WrapperRight>
           </div>

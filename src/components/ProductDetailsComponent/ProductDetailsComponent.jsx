@@ -88,6 +88,31 @@ const ProductDetailsComponent = ({idProduct}) => {
 
   const handleAddOrderProduct = () => {
     if (!user?.id) {
+      navigate('/sign-in', { state: { prevPath: location?.pathname } })
+    } else {
+      const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
+
+      if ((orderRedux?.amount + numProduct) <= orderRedux?.countInStock || (!orderRedux && productDetails?.countInStock > 0)) {
+        dispatch(addOrderProduct({
+          orderItem: {
+            name: productDetails?.name,
+            amount: numProduct,
+            image: productDetails?.image,
+            price: productDetails?.price,
+            product: productDetails?._id,
+            discount: productDetails?.discount,
+            countInStock: productDetails?.countInStock,
+            userId: user?.id
+          }
+        }))
+      } else {
+        setErrorLimitOrder(true)
+      };
+    };
+  };
+
+  const handleByAddOrderProduct = () => {
+    if (!user?.id) {
       navigate('/sign-in', {state: location?.pathname})
     } else {
       const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
@@ -101,9 +126,11 @@ const ProductDetailsComponent = ({idProduct}) => {
             price: productDetails?.price,
             product: productDetails?._id,
             discount: productDetails?.discount,
-            countInStock: productDetails?.countInStock
+            countInStock: productDetails?.countInStock,
+            userId: user?.id
           }
-        }))
+        }));
+        navigate('/order', { state: { userId: user?.id } })
       } else {
         setErrorLimitOrder(true)
       };
@@ -113,27 +140,27 @@ const ProductDetailsComponent = ({idProduct}) => {
   return (
     <>
       <Loading isLoading={isLoading}>
-        <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
+        <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px', height:'100%' }}>
           <Col span={10} style={{ paddingRight: '8px' }}>
             <Image src={productDetails?.image} alt="image product" preview={false} />
             <Row style={{ paddingTop: '10px', justifyContent: 'space-between'}}>
               <WrapperStyleColImage span={4}>
-                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
               </WrapperStyleColImage>
               <WrapperStyleColImage span={4}>
-                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
               </WrapperStyleColImage>
               <WrapperStyleColImage span={4}>
-                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
               </WrapperStyleColImage>
               <WrapperStyleColImage span={4}>
-                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
               </WrapperStyleColImage>
               <WrapperStyleColImage span={4}>
-                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
               </WrapperStyleColImage>
               <WrapperStyleColImage span={4}>
-                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
               </WrapperStyleColImage>
             </Row>
           </Col>
@@ -164,19 +191,23 @@ const ProductDetailsComponent = ({idProduct}) => {
               </WrapperQualityProduct>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px'}}>
-              <ButtonComponent
-                size={40}
-                styleButton={{ 
-                  background: '#fff',
-                  height: '48px',
-                  width: '220px',
-                  border: '1px solid rgb(238, 77, 45)',
-                  borderRadius: '4px'
-                }}
-                styleTextButton={{ color: 'rgb(13, 92, 182', fontSize:'15px' }}
-                textbutton={'Thêm Vào Giỏ Hàng'}
-              >
-              </ButtonComponent>
+              <div>
+                <ButtonComponent
+                  size={40}
+                  styleButton={{ 
+                    background: '#fff',
+                    height: '48px',
+                    width: '220px',
+                    border: '1px solid rgb(238, 77, 45)',
+                    borderRadius: '4px'
+                  }}
+                  onClick={handleAddOrderProduct}
+                  styleTextButton={{ color: 'rgb(13, 92, 182', fontSize:'15px' }}
+                  textbutton={'Thêm Vào Giỏ Hàng'}
+                >
+                </ButtonComponent>
+                {errorLimitOrder && <div style={{color: 'red'}}>Sản phẩm đã hết hàng</div>}
+              </div>
               <div>
                 <ButtonComponent
                   size={40}
@@ -187,7 +218,7 @@ const ProductDetailsComponent = ({idProduct}) => {
                     border: 'none',
                     borderRadius: '4px'
                   }}
-                  onClick={handleAddOrderProduct}
+                  onClick={handleByAddOrderProduct}
                   styleTextButton={{ color: '#fff', fontSize:'15px', fontWeight: '700' }}
                   textbutton={'Mua Ngay'}
                 >

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from "./style";
+import { StyledImage, WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { Image } from "antd";
@@ -39,6 +39,7 @@ const SignInPage = () => {
         navigate('/')
       };
       localStorage.setItem('access_token', JSON.stringify(data?.access_token));
+      localStorage.setItem('refresh_token', JSON.stringify(data?.refresh_token));
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token)
         if(decoded?.id) {
@@ -49,8 +50,10 @@ const SignInPage = () => {
   }, [isSuccess]);
 
   const handleGetDetailsUser = async (id, token) => {
+    const storage = localStorage.getItem('refresh_token');
+    const refreshToken = JSON.parse(storage);
     const res = await UserService.getDetailsUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
+    dispatch(updateUser({ ...res?.data, access_token: token, refreshToken }));
   };
 
   const handleNavigateSignUp = () => {
@@ -70,6 +73,10 @@ const SignInPage = () => {
       email,
       password
     });
+  };
+
+  const handleClick = () => {
+    navigate('/');
   };
 
   return (
@@ -128,7 +135,7 @@ const SignInPage = () => {
           </p>
         </WrapperContainerLeft>
         <WrapperContainerRight>
-          <Image src={imageLogo} alt="image logo" preview={false} height='203px' width='203px'/>
+          <StyledImage src={imageLogo} alt="image logo" preview={false} height='203px' width='203px' onClick={handleClick}/>
           <h4>Mua sắm tại shopee</h4>
         </WrapperContainerRight>
       </div>

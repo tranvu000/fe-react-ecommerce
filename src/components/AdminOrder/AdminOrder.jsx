@@ -1,5 +1,5 @@
 import { Button, Space } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { WrapperHeader } from './style';
 import TableComponent from '../TableComponent/TableComponent';
 import InputComponent from '../InputComponent/InputComponent';
@@ -11,6 +11,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { orderContant } from '../../contant';
 import PieChartComponent from './PieChartComponent';
+import { useMutationHooks } from '../../hooks/useMutationHook';
+import { useLocation } from 'react-router-dom';
 
 const AdminOrder = () => {
   const user = useSelector((state) => state?.user);
@@ -142,14 +144,41 @@ const AdminOrder = () => {
     }
   });
 
+  const [rowSelected, setRowSelected] = useState('');
+
+
+  const mutationDeletedMany = useMutationHooks((data) => {
+    const { token, ...ids } = data;
+    const res = OrderService.deleteManyOrder(ids, token);
+
+    return res;
+  });
+
+  const handleDeleteManyOrders = (ids) => {
+    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+      onSettled: () => {
+        queryOrder.refetch()
+      }
+    })
+  };
+
   return (
     <div>
       <WrapperHeader>Quản lý đơn hàng</WrapperHeader>
       <div style={{height: 200, width:200}}>
         <PieChartComponent data={orders?.data} />
       </div>
-      <div style={{ marginTop: '20px' }}>
+      {/* <div style={{ marginTop: '20px' }}>
         <TableComponent  columns={columns} isLoading={isLoadingOrders} data={dataTable} />
+      </div> */}
+      <div style={{ marginTop: '20px' }}>
+        <TableComponent handleDeleteMany={handleDeleteManyOrders} columns={columns} isLoading={isLoadingOrders} data={dataTable} onRow={(record, rowIndex) => {
+          return {
+            onClick: event => {
+              setRowSelected(record._id)
+            }
+          };
+        }} />
       </div>
     </div>
   )

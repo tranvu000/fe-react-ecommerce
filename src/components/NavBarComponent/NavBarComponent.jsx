@@ -8,15 +8,13 @@ import {
 import { Checkbox, Rate } from "antd";
 
 const NavBarComponent = () => {
-  const onChange = () => {
-
-  }
+  const onChange = () => { };
   const renderContent = (type, options) => {
     switch (type) {
       case 'text':
-        return options.map(option => {
+        return options.map((option, index) => {
           return (
-            <WrapperTextValue>{option}</WrapperTextValue>
+            <WrapperTextValue key={index}>{option}</WrapperTextValue>
           )
         })
       case 'checkbox':
@@ -24,7 +22,7 @@ const NavBarComponent = () => {
           <Checkbox.Group style={{ width: '100%', display: 'flex', flexDirection: 'column', grap: '12px' }} onChange={onChange}>
             {options.map(option => {
               return (
-                <Checkbox style={{ marginLeft: 0 }} value={option.value}>{option.label}</Checkbox>
+                <Checkbox key={option.value} style={{ marginLeft: 0 }} value={option.value}>{option.label}</Checkbox>
               )
             })}
           </Checkbox.Group>
@@ -32,38 +30,39 @@ const NavBarComponent = () => {
       case 'star':
         return options.map(option => {
           return (
-            <div style={{ display: 'flex', gap: '4px'}}>
+            <div key={option} style={{ display: 'flex', gap: '4px'}}>
               <Rate style={{ fontSize: '12px'}} disabled defaultValue={option} />
               <span>{ `Từ ${option} sao` }</span>
             </div>
           )
         })
       case 'price':
-        return options.map(option => {
+        return options.map((option, index) => {
           return (
-            <WrapperTextPrice>{option}</WrapperTextPrice>
+            <WrapperTextPrice key={index}>{option}</WrapperTextPrice>
           )
         })
         
       default:
         return {}
     }
-  }
+  };
+
   return (
     <div>
       <WrapperLabelText>Label</WrapperLabelText>
       <WrapperContent>
         {renderContent('text', ['Điện thoại', 'Máy tính', 'Quần áo'])}
       </WrapperContent>
-      {/* <WrapperContent>
+      <WrapperContent>
         {renderContent('checkbox', [
           {
-            value: 'a',
-            label: 'A'
+            value: 'shop mall',
+            label: 'Shop mall'
           },
           {
-            value: 'b',
-            label: 'B'
+            value: 'shop yêu thích',
+            label: 'Shop yêu thích'
           },
         ])}
       </WrapperContent>
@@ -72,7 +71,7 @@ const NavBarComponent = () => {
       </WrapperContent>
       <WrapperContent>
         {renderContent('price', ['Giá dưới 100.000', 'Giá dưới 500.000', 'Giá dưới 1.000.000', 'Giá trên 1.000.000'])}
-      </WrapperContent> */}
+      </WrapperContent>
     </div>
   )
 };
