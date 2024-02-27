@@ -34,9 +34,10 @@ const OrderSucess = () => {
               </WrapperInfo>
               <WrapperItemOrderInfo>
                 {state.orders?.map((order) => {
+                  const totalPrice = order.price * order.amount;
                   return (
                     <WrapperItemOrder key={order?.name}>
-                      <div style={{width: '500px', display: 'flex', alignItems: 'center', gap: 4}}> 
+                      <div style={{width: '500px', display: 'flex', alignItems: 'center', gap: 10}}> 
                         <img src={order.image} style={{width: '77px', height: '79px', objectFit: 'cover'}}/>
                         <div style={{
                           width: 260,
@@ -45,12 +46,15 @@ const OrderSucess = () => {
                           whiteSpace:'nowrap'
                         }}>{order?.name}</div>
                       </div>
-                      <div style={{flex: 1, display: 'flex', alignItems: 'center',gap: '10px'}}>
+                      <div style={{flex: 1, display: 'flex', alignItems: 'center',gap: '100px'}}>
                         <span>
-                          <span style={{ fontSize: '13px', color: '#242424' }}>Giá tiền: {convertPrice(order?.price)}</span>
+                          <span style={{ fontSize: '13px', color: '#242424' }}>Đơn giá: {convertPrice(order?.price)}</span>
                         </span>
                         <span>
                           <span style={{ fontSize: '13px', color: '#242424' }}>Số lượng: {order?.amount}</span>
+                        </span>
+                        <span>
+                          <span style={{ fontSize: '13px', color: '#242424' }}>Thành tiền: {convertPrice(totalPrice)}</span>
                         </span>
                       </div>
                     </WrapperItemOrder>
@@ -58,7 +62,7 @@ const OrderSucess = () => {
                 })}
               </WrapperItemOrderInfo>
               <div>
-                <span style={{ fontSize: '16px', color: 'red', fontWeight: 'bold' }}>Tổng tiền: {convertPrice(state?.totalPriceMemo)}</span>
+                <span style={{ fontSize: '16px', color: 'rgb(238, 77, 45)', fontWeight: 'bold' }}>Tổng tiền: {convertPrice(state?.totalPriceMemo)}</span>
               </div>
             </WrapperContainer>
           </div>

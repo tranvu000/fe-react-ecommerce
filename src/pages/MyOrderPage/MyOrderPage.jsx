@@ -86,7 +86,7 @@ const MyOrderPage = () => {
         </WrapperHeaderItem>
       )
     })
-  }
+  };
 
   return (
     // <Loading isLoading={isLoading || isLoadingDelete}>
@@ -94,58 +94,64 @@ const MyOrderPage = () => {
         <div style={{height: '100%', width: '1270px', margin: '0 auto'}}>
           <h3 style={{fontWeight: 'bold'}}>Đơn hàng của tôi</h3>
           <WrapperListOrder>
-            {data?.map((order) => {
-              return (
-                <WrapperItemOrder key={order?._id}>
-                  <WrapperStatus>
-                    <span style={{fontSize: '14px', fontWeight: 'bold'}}>Trạng thái</span>
-                    <div>
-                      <span style={{color: 'rgb(255, 66, 78)'}}>Giao hàng: </span>
-                      <span style={{color: 'rgb(90, 32, 193)', fontWeight: 'bold'}}>{`${order.isDelivered ? 'Đã giao hàng': 'Chưa giao hàng'}`}</span>
-                    </div>
-                    <div>
-                      <span style={{color: 'rgb(255, 66, 78)'}}>Thanh toán: </span>
-                      <span style={{color: 'rgb(90, 32, 193)', fontWeight: 'bold'}}>{`${order.isPaid ? 'Đã thanh toán': 'Chưa thanh toán'}`}</span>
-                    </div>
-                  </WrapperStatus>
-                  {renderProduct(order?.orderItems)}
-                  <WrapperFooterItem>
-                    <div>
-                      <span style={{color: 'rgb(255, 66, 78)'}}>Tổng tiền: </span>
-                      <span 
-                        style={{ fontSize: '13px', color: 'rgb(56, 56, 61)',fontWeight: 700 }}
-                      >{convertPrice(order?.totalPrice)}</span>
-                    </div>
-                    <div style={{display: 'flex', gap: '10px'}}>
-                    <ButtonComponent
-                        onClick={() => handleDeleteOrder(order)}
-                        size={40}
-                        styleButton={{
-                          height: '36px',
-                          border: '1px solid #9255FD',
-                          borderRadius: '4px'
-                        }}
-                        textbutton={'Hủy đơn hàng'}
-                        styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
-                      >
-                      </ButtonComponent>
+            {Array.isArray(data) && data.length > 0 ? (
+              data.map((order) => {
+                return (
+                  <WrapperItemOrder key={order?._id}>
+                    <WrapperStatus>
+                      <span style={{fontSize: '14px', fontWeight: 'bold'}}>Trạng thái</span>
+                      <div>
+                        <span style={{color: 'rgb(255, 66, 78)'}}>Giao hàng: </span>
+                        <span style={{color: 'rgb(90, 32, 193)', fontWeight: 'bold'}}>{`${order.isDelivered ? 'Đã giao hàng': 'Chưa giao hàng'}`}</span>
+                      </div>
+                      <div>
+                        <span style={{color: 'rgb(255, 66, 78)'}}>Thanh toán: </span>
+                        <span style={{color: 'rgb(90, 32, 193)', fontWeight: 'bold'}}>{`${order.isPaid ? 'Đã thanh toán': 'Chưa thanh toán'}`}</span>
+                      </div>
+                    </WrapperStatus>
+                    {renderProduct(order?.orderItems)}
+                    <WrapperFooterItem>
+                      <div>
+                        <span style={{color: 'rgb(255, 66, 78)'}}>Tổng tiền: </span>
+                        <span 
+                          style={{ fontSize: '13px', color: 'rgb(56, 56, 61)',fontWeight: 700 }}
+                        >{convertPrice(order?.totalPrice)}</span>
+                      </div>
+                      <div style={{display: 'flex', gap: '10px'}}>
                       <ButtonComponent
-                        onClick={() => handleDetailsOrder(order?._id)}
-                        size={40}
-                        styleButton={{
-                          height: '36px',
-                          border: '1px solid #9255FD',
-                          borderRadius: '4px'
-                        }}
-                        textbutton={'Xem chi tiết'}
-                        styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
-                      >
-                      </ButtonComponent>
-                    </div>
-                  </WrapperFooterItem>
-                </WrapperItemOrder>
-              )
-            })}
+                          onClick={() => handleDeleteOrder(order)}
+                          size={40}
+                          styleButton={{
+                            height: '36px',
+                            border: '1px solid #9255FD',
+                            borderRadius: '4px'
+                          }}
+                          textbutton={'Hủy đơn hàng'}
+                          styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
+                        >
+                        </ButtonComponent>
+                        <ButtonComponent
+                          onClick={() => handleDetailsOrder(order?._id)}
+                          size={40}
+                          styleButton={{
+                            height: '36px',
+                            border: '1px solid #9255FD',
+                            borderRadius: '4px'
+                          }}
+                          textbutton={'Xem chi tiết'}
+                          styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
+                        >
+                        </ButtonComponent>
+                      </div>
+                    </WrapperFooterItem>
+                  </WrapperItemOrder>
+                )
+              })
+            ) : (
+              <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '18px', color: '#666' }}>
+                Không có đơn hàng nào
+              </div>
+            )}
           </WrapperListOrder>
         </div>
       </WrapperContainer>

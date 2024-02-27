@@ -41,7 +41,6 @@ export const WrapperPriceTextProduct = styled.h1`
 
 export const WrapperAddressProduct = styled.div`
   span.address {
-    text-decoration: underline;
     font-size: 15px;
     line-height: 24px;
     font-weight: 500px;
@@ -65,9 +64,6 @@ export const WrapperQualityProduct = styled.div`
   border-radius: 4px;
   border: 1px solid #ccc;
   width: 120px;
-`
-export const WrapperButtonQualityProduct = styled.div`
-
 `
 
 export const WrapperInputNumber = styled(InputNumber)`

@@ -24,19 +24,23 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const mutation = useMutationHooks(
-    data => UserService.signUpUser(data)
-  );
-  const { data, isLoading, isSuccess, isError } = mutation;
+  const mutation = useMutationHooks((data) => {
+    UserService.signUpUser(data)
+      .then(response => {
+        if (response.status === 'ERR') {
+          message.error(response.message);
+        } else if (response.status === 'OK') {
+          message.success();
+          handleNavigateSignIn()
+        }
+      })
+      .catch(error => {
+        console.error('Error signing up user:', error);
+        message.error('An error occurred while registering');
+      });
+  });
 
-  useEffect(() => {
-    if (isSuccess) {
-      message.success()
-      handleNavigateSignIn()
-    } else if (isError) {
-      message.error()
-    }
-  }, [isSuccess, isError])
+  const { data, isLoading, isSuccess, isError } = mutation;
 
   const handleOnchangeEmail = (value) => {
     setEmail(value)
@@ -152,7 +156,7 @@ const SignUpPage = () => {
               onClick={handleSignUp}
               size={40}
               styleButton={{ 
-                background: 'rgb(255, 57, 69)',
+                background: 'rgb(238, 77, 45)',
                 height: '48px',
                 width: '100%',
                 border: 'none',

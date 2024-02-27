@@ -32,12 +32,14 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [loading, setLoading] = useState(false);
 
   const handleNavigateLogin = () => {
-    navigate('/sign-in')
+    navigate('/sign-in');
   };
 
   const handleLogout = async () => {
     setLoading(true);
     await UserService.logoutUser();
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('access_token');
     dispatch(resetUser());
     navigate('/');
     setLoading(false);

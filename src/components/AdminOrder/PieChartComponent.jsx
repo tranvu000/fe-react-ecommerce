@@ -3,8 +3,8 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { convertDataChart } from '../../utils';
 
 const PieChartComponent = (props) => {
-  // const data = convertDataChart(props.data, 'paymentMethod');
-  const data = Array.isArray(props.data) ? convertDataChart(props.data, 'paymentMethod') : [];
+  const dataArray = Array.isArray(props.data) ? props.data : [];
+  const data = convertDataChart(dataArray, 'paymentMethod');
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   const RADIAN = Math.PI / 180;

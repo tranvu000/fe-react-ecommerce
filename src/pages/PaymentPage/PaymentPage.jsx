@@ -9,17 +9,19 @@ import { useMemo } from 'react';
 import ModalComponent from '../../components/ModalComponent/ModalComponent';
 import InputComponent from '../../components/InputComponent/InputComponent';
 import { useMutationHooks } from '../../hooks/useMutationHook';
-import * as  UserService from '../../services/UserService';
+import * as UserService from '../../services/UserService';
 import * as OrderService from '../../services/OrderService';
 import Loading from '../../components/LoadingComponent/Loading';
 import * as message from '../../components/Message/Message';
 import { updateUser } from '../../redux/slides/userSlide';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { removeAllOrderProduct } from '../../redux/slides/orderSlide';
 import { PayPalButton } from 'react-paypal-button-v2';
 import * as  PaymentService from '../../services/PaymentService';
 
 const PaymentPage = () => {
+  const { state } = useLocation();
+  const orderItems = state?.orderItems;
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
 
@@ -58,70 +60,65 @@ const PaymentPage = () => {
     setIsOpenModalUpdateInfo(true)
   };
 
-  const priceMemo = useMemo(() => {
-    const result = order?.orderItemsSelected?.reduce((total, cur) => {
-      return total + ((cur.price * cur.amount))
+  const userPriceMemo = useMemo(() => {
+    const result = orderItems?.reduce((total, cur) => {
+      return total + (cur.price * cur.amount)
     }, 0);
 
     return result;
-  }, [order]);
+  }, [orderItems]);
 
   const priceDiscountMemo = useMemo(() => {
     let totalDiscount = 0;
 
-    order?.orderItemsSelected?.forEach((item) => {
+    orderItems?.forEach((item) => {
       const itemDiscount = item.discount ? item.discount : 0;
       const itemPrice = item.price * item.amount;
       const itemTotalDiscount = (itemPrice * itemDiscount) / 100;
-      
       totalDiscount += itemTotalDiscount;
     });
   
     return totalDiscount;
-  }, [order]);
+  }, [orderItems]);
 
   const deliveryPriceMemo = useMemo(() => {
-    if (priceMemo > 0 && priceMemo < 200000 ) {
+    if (userPriceMemo > 0 && userPriceMemo < 200000 ) {
       return 20000
-    } else if (priceMemo >= 200000 && priceMemo <= 500000) {
+    } else if (userPriceMemo >= 200000 && userPriceMemo <= 500000) {
       return 10000
-    } else if ((priceMemo === 0 && order?.orderItemsSelected?.length === 0) || priceMemo > 500000) {
+    } else if ((userPriceMemo === 0 && orderItems?.length === 0) || userPriceMemo > 500000) {
       return 0
     }
-  }, [priceMemo]);
-
+  }, [userPriceMemo]);
 
   const totalPriceMemo = useMemo(() => {
-    return Number(priceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo)
-  },[priceMemo, priceDiscountMemo, deliveryPriceMemo]);
+    return Number(userPriceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo)
+  },[userPriceMemo, priceDiscountMemo, deliveryPriceMemo]);
 
   const handleAddOrder = () => {
-    if(user?.access_token && order?.orderItemsSelected && user?.name
-      && user?.address && user?.phone && user?.city && priceMemo && user?.id) {
-        mutationAddOrder.mutate(
-          { 
-            token: user?.access_token, 
-            orderItems: order?.orderItemsSelected, 
-            fullName: user?.name,
-            address:user?.address, 
-            phone:user?.phone,
-            city: user?.city,
-            paymentMethod: payment,
-            itemsPrice: priceMemo,
-            shippingPrice: deliveryPriceMemo,
-            totalPrice: totalPriceMemo,
-            user: user?.id,
-            email: user?.email
-          }
-        )
-      }
+    if (user?.access_token && orderItems && user?.name
+      && user?.address && user?.phone && user?.city && payment && userPriceMemo && deliveryPriceMemo !== undefined && totalPriceMemo && user?.id) {
+      mutationAddOrder.mutate({
+        token: user?.access_token,
+        orderItems: orderItems,
+        fullName: user?.name,
+        address:user?.address,
+        phone:user?.phone,
+        city: user?.city,
+        paymentMethod: payment,
+        itemsPrice: userPriceMemo,
+        shippingPrice: deliveryPriceMemo,
+        totalPrice: totalPriceMemo,
+        user: user?.id,
+        email: user?.email || ''
+      })
+    }
   };
   
   const mutationUpdate = useMutationHooks(
     (data) => {
       const { id, token, ...rests } = data;
       const res = UserService.updateUser(id, { ...rests }, token);
-
       return res;
     },
   );
@@ -134,28 +131,29 @@ const PaymentPage = () => {
       return res;
     },
   );
-
+  
   const {isLoading, data} = mutationUpdate;
   const {data: dataAdd, isLoading: isLoadingAddOrder, isSuccess, isError} = mutationAddOrder;
 
   useEffect(() => {
     if (isSuccess && dataAdd?.status === 'OK') {
       const arrayOrdered = [];
-      order?.orderItemsSelected?.forEach(element => {
+
+      orderItems.forEach(element => {
         arrayOrdered.push(element.product)
       });
-      dispatch(removeAllOrderProduct({listChecked: arrayOrdered}))
+      dispatch(removeAllOrderProduct({listChecked: arrayOrdered, userId: user.id}))
       message.success('Đặt hàng thành công');
       navigate('/orderSuccess', {
         state: {
           delivery,
           payment,
-          orders: order?.orderItemsSelected,
+          orders: orderItems,
           totalPriceMemo: totalPriceMemo
         }
       });
     } else if (isError) {
-      message.error()
+      message.error("Đặt hàng không thành công")
     }
   }, [isSuccess, isError]);
 
@@ -171,29 +169,30 @@ const PaymentPage = () => {
   };
 
   const onSuccessPaypal = (details, data) => {
-    mutationAddOrder.mutate(
-      { 
+    if(user?.access_token && orderItems && user?.name
+      && user?.address && user?.phone && user?.city && payment && userPriceMemo && deliveryPriceMemo !== undefined && totalPriceMemo && user?.id) {
+      mutationAddOrder.mutate({
         token: user?.access_token, 
-        orderItems: order?.orderItemsSelected, 
+        orderItems: orderItems, 
         fullName: user?.name,
         address:user?.address, 
         phone:user?.phone,
         city: user?.city,
         paymentMethod: payment,
-        itemsPrice: priceMemo,
+        itemsPrice: userPriceMemo,
         shippingPrice: deliveryPriceMemo,
         totalPrice: totalPriceMemo,
         user: user?.id,
         isPaid: true,
         paidAt: details.update_time,
         email: user?.email
-      }
-    )
+      })
+    }
   };
 
   const handleUpdateInforUser = () => {
     const {name, address, city, phone} = stateUserDetails;
-    if(name && address && city && phone){
+    if (name && address && city && phone) {
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
         onSuccess: () => {
           dispatch(updateUser({name, address,city, phone}))
@@ -276,7 +275,7 @@ const PaymentPage = () => {
                 <WrapperInfo>
                   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <span>Tạm tính</span>
-                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceMemo)}</span>
+                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(userPriceMemo)}</span>
                   </div>
                   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <span>Giảm giá</span>
@@ -290,7 +289,7 @@ const PaymentPage = () => {
                 <WrapperTotal>
                   <span>Tổng tiền</span>
                   <span style={{display:'flex', flexDirection: 'column'}}>
-                    <span style={{color: 'rgb(254, 56, 52)', fontSize: '24px', fontWeight: 'bold'}}>{convertPrice(totalPriceMemo)}</span>
+                    <span style={{color: 'rgb(238, 77, 45)', fontSize: '24px', fontWeight: 'bold'}}>{convertPrice(totalPriceMemo)}</span>
                     <span style={{color: '#000', fontSize: '11px'}}>(Đã bao gồm VAT nếu có)</span>
                   </span>
                 </WrapperTotal>
@@ -311,13 +310,13 @@ const PaymentPage = () => {
                   onClick={() => handleAddOrder()}
                   size={40}
                   styleButton={{
-                      background: 'rgb(255, 57, 69)',
+                      background: 'rgb(238, 77, 45)',
                       height: '48px',
                       width: '320px',
                       border: 'none',
                       borderRadius: '4px'
                   }}
-                  textbutton={'Đặt hàng'}
+                  textbutton={'Đặt Hàng'}
                   styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                 ></ButtonComponent>
               )}

@@ -36,8 +36,8 @@ export const WrapperItemOrder = styled.div`
   align-items: center;
   padding: 9px 16px;
   background: #fff;
-  margin-top: 12px;
-  justify-content: center;
+  margin-bottom: 12px;
+  justify-content: space-between;
 `
 
 export const WrapperPriceDiscount = styled.span`
@@ -79,8 +79,6 @@ export const WrapperItemOrderInfo = styled.div`
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
   width: 100%;
-  display: flex;
-  justify-content: center;
 `
 
 export const WrapperTotal = styled.div`

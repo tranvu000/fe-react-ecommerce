@@ -81,8 +81,8 @@ const HomePage = () => {
             </WrapperProducts>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
               <WrapperButtonMore textbutton={isPreviousData ? 'Load more' : 'Xem Thêm'} type="outline" styleButton={{
-                border: `1px solid ${products?.total === products?.data?.length ? '#f5f5f5' : '#9255FD'}`,
-                color: `${products?.total === products?.data?.length ? '#f5f5f5' : '#9255FD'}`,
+                border: `1px solid ${products?.total === products?.data?.length ? '#f5f5f5' : 'rgb(238, 77, 45)'}`,
+                color: `${products?.total === products?.data?.length ? '#f5f5f5' : 'rgb(238, 77, 45)'}`,
                 width: "240px",
                 height: "38px",
                 borderRadius: "4px"

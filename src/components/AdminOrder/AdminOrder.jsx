@@ -1,5 +1,5 @@
 import { Button, Space } from 'antd';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { WrapperHeader } from './style';
 import TableComponent from '../TableComponent/TableComponent';
 import InputComponent from '../InputComponent/InputComponent';
@@ -16,6 +16,8 @@ import { useLocation } from 'react-router-dom';
 
 const AdminOrder = () => {
   const user = useSelector((state) => state?.user);
+  const searchInput = useRef(null);
+
   
   const getAllOrders = async () => {
     const res = await OrderService.getAllOrder(user?.access_token);
@@ -26,6 +28,16 @@ const AdminOrder = () => {
   const queryOrder = useQuery({ queryKey: ['orders'], queryFn: getAllOrders });
   const { isLoading: isLoadingOrders, data: orders } = queryOrder;
 
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    // setSearchText(selectedKeys[0]);
+    // setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    // setSearchText('');
+  };
+
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div
@@ -35,11 +47,11 @@ const AdminOrder = () => {
         onKeyDown={(e) => e.stopPropagation()}
       >
         <InputComponent
-          // ref={searchInput}
+          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          // onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
             display: 'block',
@@ -48,7 +60,7 @@ const AdminOrder = () => {
         <Space>
           <Button
             type="primary"
-            // onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
             style={{
@@ -58,7 +70,7 @@ const AdminOrder = () => {
             Search
           </Button>
           <Button
-            // onClick={() => clearFilters && handleReset(clearFilters)}
+            onClick={() => clearFilters && handleReset(clearFilters)}
             size="small"
             style={{
               width: 90,
@@ -80,7 +92,7 @@ const AdminOrder = () => {
       record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        // setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput.current?.select(), 100);
       }
     },
   });
@@ -89,43 +101,63 @@ const AdminOrder = () => {
     {
       title: 'User name',
       dataIndex: 'userName',
-      sorter: (a, b) => a.userName.length - b.userName.length,
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
       ...getColumnSearchProps('userName')
     },
     {
       title: 'Phone',
       dataIndex: 'phone',
-      sorter: (a, b) => a.phone.length - b.phone.length,
+      sorter: (a, b) => a.phone.localeCompare(b.phone),
       ...getColumnSearchProps('phone')
     },
     {
       title: 'Address',
       dataIndex: 'address',
-      sorter: (a, b) => a.address.length - b.address.length,
+      sorter: (a, b) => a.address.localeCompare(b.address),
       ...getColumnSearchProps('address')
     },
     {
       title: 'Paided',
       dataIndex: 'isPaid',
-      sorter: (a, b) => a.isPaid.length - b.isPaid.length,
+      sorter: (a, b) => a.isPaid.localeCompare(b.isPaid),
+      filters: [
+        {
+          text: 'True',
+          value: 'true',
+        },
+        {
+          text: 'False',
+          value: 'false',
+        },
+      ],
       ...getColumnSearchProps('isPaid')
     },
     {
       title: 'Shipped',
       dataIndex: 'isDelivered',
-      sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
+      sorter: (a, b) => a.isDelivered.localeCompare(b.isDelivered),
+      filters: [
+        {
+          text: 'True',
+          value: 'true',
+        },
+        {
+          text: 'False',
+          value: 'false',
+        },
+      ],
       ...getColumnSearchProps('isDelivered')
     },
     {
       title: 'Payment method',
       dataIndex: 'paymentMethod',
-      sorter: (a, b) => a.paymentMethod.length - b.paymentMethod.length,
+      sorter: (a, b) => a.paymentMethod.localeCompare(b.paymentMethod),
       ...getColumnSearchProps('paymentMethod')
     },
     {
       title: 'Total price',
       dataIndex: 'totalPrice',
-      sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
+      sorter: (a, b) => a.totalPrice.localeCompare(b.totalPrice),
       ...getColumnSearchProps('totalPrice')
     },
   ];
@@ -138,8 +170,8 @@ const AdminOrder = () => {
       phone: order?.shippingAddress?.phone,
       address: order?.shippingAddress?.address,
       paymentMethod: orderContant.payment[order?.paymentMethod],
-      isPaid: order?.isPaid ? 'TRUE' :'FALSE',
-      isDelivered: order?.isDelivered ? 'TRUE' : 'FALSE',
+      isPaid: order?.isPaid ? 'True' :'False',
+      isDelivered: order?.isDelivered ? 'True' : 'False',
       totalPrice: convertPrice(order?.totalPrice)
     }
   });
@@ -168,9 +200,6 @@ const AdminOrder = () => {
       <div style={{height: 200, width:200}}>
         <PieChartComponent data={orders?.data} />
       </div>
-      {/* <div style={{ marginTop: '20px' }}>
-        <TableComponent  columns={columns} isLoading={isLoadingOrders} data={dataTable} />
-      </div> */}
       <div style={{ marginTop: '20px' }}>
         <TableComponent handleDeleteMany={handleDeleteManyOrders} columns={columns} isLoading={isLoadingOrders} data={dataTable} onRow={(record, rowIndex) => {
           return {

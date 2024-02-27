@@ -21,10 +21,23 @@ const ProfilePage = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [avatar, setAvatar] = useState('');
+
   const mutation = useMutationHooks(
     (data) => {
       const { id, access_token, ...rests } = data
       UserService.updateUser(id, rests, access_token)
+        .then(response => {
+          if (response.status === 'ERR') {
+            message.error(response.message);
+          } else if (response.status === 'OK') {
+            message.success();
+            handleGetDetailsUser(user?.id, user?.access_token);
+          }
+        })
+        .catch(error => {
+          console.error('Error updating user:', error);
+          message.error('Failed to update user information');
+        });
     }
   );
 
@@ -38,15 +51,6 @@ const ProfilePage = () => {
     setAddress(user?.address)
     setAvatar(user?.avatar)
   }, [user]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      message.success()
-      handleGetDetailsUser(user?.id, user?.access_token)
-    } else if (isError) {
-      message.error()
-    }
-  }, [isSuccess, isError]);
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token)

@@ -4,7 +4,7 @@ import { Button, Form, Select, Space } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
-import { getBase64, renderOptions } from "../../utils";
+import { convertPrice, getBase64, renderOptions } from "../../utils";
 import * as ProductService from "../../services/ProductService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
@@ -230,7 +230,7 @@ const AdminProduct = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => a.name.localeCompare(b.name),
       ...getColumnSearchProps('name')
     },
     {
@@ -308,6 +308,8 @@ const AdminProduct = () => {
     {
       title: 'Type',
       dataIndex: 'type',
+      sorter: (a, b) => a.type.localeCompare(b.type),
+      ...getColumnSearchProps('type')
     },
     {
       title: 'Action',
@@ -318,7 +320,8 @@ const AdminProduct = () => {
   const dataTable = products?.data?.length && products?.data?.map((product) => {
     return {
       ...product,
-      key: product._id
+      key: product._id,
+      price: convertPrice(product?.price)
     };
   });
 
@@ -609,7 +612,7 @@ const AdminProduct = () => {
                 },
               ]}
             >
-              <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
+              <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1} fileList={stateProduct.image ? [{ uid: '-1', name: 'image.png', status: 'done', url: stateProduct.image }] : []}>
                 <Button>Select File</Button>
                 {stateProduct?.image && (
                   <img src={stateProduct?.image} style={{
@@ -734,7 +737,7 @@ const AdminProduct = () => {
                 },
               ]}
             >
-              <WrapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1}>
+              <WrapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1} fileList={stateProductDetails.image ? [{ uid: '-1', name: 'image.png', status: 'done', url: stateProductDetails.image }] : []}>
                 <Button>Select File</Button>
                 {stateProductDetails?.image && (
                   <img src={stateProductDetails?.image} style={{
