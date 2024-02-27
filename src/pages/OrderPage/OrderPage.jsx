@@ -54,25 +54,23 @@ const OrderPage = () => {
   };
 
   const handleChangeCount = (type, userId, idProduct, limited) => {
-    const selectedOrder = order?.orderItems.find(item => item.product === idProduct && item.userId === userId);
-    console.log("selectedOrder", selectedOrder.amount);
-    console.log("order?.orderItem", order?.orderItems);
-
-    if (selectedOrder) {
-      if (type === 'increase') {
-        if (!limited) {
-          dispatch(increaseAmount({ idProduct }))
+    if (type === 'increase') {
+      if(!limited) {
+        dispatch(increaseAmount({userId, idProduct}))
+      }
+    } else if (type === 'decrease') {
+      if (limited) {
+        if (limited === 1) {
+          dispatch(removeOrderProduct({ idProduct, userId }));
+        } else {
+          dispatch(decreaseAmount({ userId, idProduct }));
         }
-      } else {
-        if (!limited) {
-          dispatch(decreaseAmount({ idProduct }))
-        }
-      };
+      }
     }
   };
 
-  const handleDeleteOrder = (idProduct) => {
-    dispatch(removeOrderProduct({idProduct}))
+  const handleDeleteOrder = (idProduct, userId) => {
+    dispatch(removeOrderProduct({ idProduct, userId }));
   };
 
   const handleOnchangeCheckAll = (e) => {
@@ -107,59 +105,64 @@ const OrderPage = () => {
     }
   }, [isOpenModalUpdateInfo]);
 
-  const priceMemo = useMemo(() => {
-    const result = order?.orderItemsSelected?.reduce((total, cur) => {
+  const userPriceMemo = useMemo(() => {
+    const userOrderItems = order?.orderItemsSelected?.filter(item => item.userId === user?.id);
+    const result = userOrderItems.reduce((total, cur) => {
       return total + (cur.price * cur.amount)
     }, 0);
 
     return result;
-  }, [order]);
+  }, [order, user]);
 
   const priceDiscountMemo = useMemo(() => {
     let totalDiscount = 0;
 
     order?.orderItemsSelected?.forEach((item) => {
-      const itemDiscount = item.discount ? item.discount : 0;
-      const itemPrice = item.price * item.amount;
-      const itemTotalDiscount = (itemPrice * itemDiscount) / 100;
-      
-      totalDiscount += itemTotalDiscount;
+      if (item.userId === user?.id) {
+        const itemDiscount = item.discount ? item.discount : 0;
+        const itemPrice = item.price * item.amount;
+        const itemTotalDiscount = (itemPrice * itemDiscount) / 100;
+        
+        totalDiscount += itemTotalDiscount;
+      }
     });
   
     return totalDiscount;
-  }, [order]);
+  }, [order, user]);
 
   const deliveryPriceMemo = useMemo(() => {
-    if (priceMemo > 0 && priceMemo < 200000 ) {
+    if (userPriceMemo > 0 && userPriceMemo < 200000 ) {
       return 20000
-    } else if (priceMemo >= 200000 && priceMemo <= 500000) {
+    } else if (userPriceMemo >= 200000 && userPriceMemo <= 500000) {
       return 10000
-    } else if ((priceMemo === 0 && order?.orderItemsSelected?.length === 0) || priceMemo > 500000) {
+    } else if ((userPriceMemo === 0 && order?.orderItemsSelected?.length === 0) || userPriceMemo > 500000) {
       return 0
     }
-  }, [priceMemo]);
+  }, [userPriceMemo]);
 
   const totalPriceMemo = useMemo(() => {
-    return Number(priceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo);
-  }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
+    return Number(userPriceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo);
+  }, [userPriceMemo, priceDiscountMemo, deliveryPriceMemo]);
 
   const handleChangeAddress = () => {
     setIsOpenModalUpdateInfo(true)
   };
 
-  const handleRemoveAllOrder = () => {
+  const handleRemoveAllOrder = (userId) => {
     if(listChecked?.length > 1){
-      dispatch(removeAllOrderProduct({listChecked}))
+      dispatch(removeAllOrderProduct({listChecked, userId}))
     }
   };
 
   const handleAddCard = () => {
-    if (!order?.orderItemsSelected?.length) {
+    const currentUserOrderItems = order?.orderItemsSelected?.filter(item => item.userId === user?.id);
+
+    if (!currentUserOrderItems.length) {
       message.error('Vui lòng chọn sản phẩm')
     } else if (!user?.phone || !user?.address || !user?.name || !user?.city) {
       setIsOpenModalUpdateInfo(true)
     } else {
-      navigate('/payment');
+      navigate('/payment', { state: { orderItems: currentUserOrderItems } });
     }
   };
 
@@ -219,10 +222,10 @@ const OrderPage = () => {
       description: 'Trên 500.000 vnđ',
     },
   ];
-
+  
   const orderCountForCurrentUser = order?.orderItems?.reduce((count, item) => {
-    if (item.userId === user?.id) {
-      return count + 1;
+        if (item.userId === user?.id) {
+      return count + item.amount;
     }
     return count;
   }, 0);
@@ -250,7 +253,7 @@ const OrderPage = () => {
                 <span>Đơn giá</span>
                 <span>Số lượng</span>
                 <span>Thành tiền</span>
-                <DeleteOutlined style={{cursor: 'pointer'}} onClick={handleRemoveAllOrder}/>
+                <DeleteOutlined style={{cursor: 'pointer'}} onClick={() => handleRemoveAllOrder(user?.id)}/>
               </div>
             </WrapperStyleHeader>
             <WrapperListOrder>
@@ -272,16 +275,16 @@ const OrderPage = () => {
                         <span style={{ fontSize: '13px', color: '#242424' }}>{convertPrice(order?.price)}</span>
                       </span>
                       <WrapperCountOrder>
-                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', user.id, order?.product, order?.amount === 1)}>
+                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', user?.id, order?.product, order?.amount)}>
                           <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
                         </button>
-                        <WrapperInputNumber defaultValue={order?.amount} value={order?.amount} size="small" min={1} max={order?.countInStock}/>
-                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', user.id, order?.product, order?.amount === order?.countInStock)}>
+                        <WrapperInputNumber defaultValue={1} value={order?.amount} size="small" min={1} max={order?.countInStock}/>
+                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', user?.id, order?.product, order?.amount === order?.countInStock)}>
                           <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
                         </button>
                       </WrapperCountOrder>
-                      <span style={{color: 'rgb(255, 66, 78)', fontSize: '13px', fontWeight: 500}}>{convertPrice(order?.price * order?.amount)}</span>
-                      <DeleteOutlined style={{cursor: 'pointer'}} onClick={() => handleDeleteOrder(order?.product)}/>
+                      <span style={{color: 'rgb(238, 77, 45)', fontSize: '13px', fontWeight: 500}}>{convertPrice(order?.price * order?.amount)}</span>
+                      <DeleteOutlined style={{cursor: 'pointer'}} onClick={() => handleDeleteOrder(order?.product, order?.userId)}/>
                     </div>
                   </WrapperItemOrder>
                 )
@@ -294,13 +297,13 @@ const OrderPage = () => {
                 <div>
                   <span>Địa chỉ: </span>
                   <span style={{fontWeight: 'bold'}}>{`${user?.address} ${user?.city}`}</span>
-                  <span onClick={handleChangeAddress} style={{color: 'rgb(238, 77, 45)', cursor: 'pointer'}}>Thay đổi</span>
+                  <span onClick={handleChangeAddress} style={{color: 'rgb(238, 77, 45)', cursor: 'pointer', marginLeft: '6px'}}>Thay đổi</span>
                 </div>
               </WrapperInfo>
               <WrapperInfo>
                 <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                   <span>Tạm tính</span>
-                  <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceMemo)}</span>
+                  <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(userPriceMemo)}</span>
                 </div>
                 <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                   <span>Giảm giá</span>
@@ -314,7 +317,7 @@ const OrderPage = () => {
               <WrapperTotal>
                 <span>Tổng tiền</span>
                 <span style={{display:'flex', flexDirection: 'column'}}>
-                  <span style={{color: 'rgb(254, 56, 52)', fontSize: '24px', fontWeight: 'bold'}}>{convertPrice(totalPriceMemo)}</span>
+                  <span style={{color: 'rgb(238, 77, 45)', fontSize: '24px', fontWeight: 'bold'}}>{convertPrice(totalPriceMemo)}</span>
                   <span style={{color: '#000', fontSize: '11px'}}>(Đã bao gồm VAT nếu có)</span>
                 </span>
               </WrapperTotal>
@@ -323,7 +326,7 @@ const OrderPage = () => {
               onClick={() => handleAddCard()}
               size={40}
               styleButton={{
-                  background: 'rgb(255, 57, 69)',
+                  background: 'rgb(238, 77, 45)',
                   height: '48px',
                   width: '320px',
                   border: 'none',
@@ -331,7 +334,8 @@ const OrderPage = () => {
               }}
               textbutton={'Mua hàng'}
               styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-          ></ButtonComponent>
+            ></ButtonComponent>
+            {/* {errorLimitOrder && <div style={{color: 'red'}}>Sản phẩm đã hết hàng</div>} */}
           </WrapperRight>
         </div>
       </div>

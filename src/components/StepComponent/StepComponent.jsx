@@ -11,7 +11,6 @@ const StepComponent = ({current = 0, items = []}) => {
         )
       })}
     </Steps>
-
   )
 };
 

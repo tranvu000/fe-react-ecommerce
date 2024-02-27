@@ -37,8 +37,11 @@ export const WrapperUploadFile = styled(Upload)`
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    background-color: rgb(238, 77, 45);
+
   }
   & .ant-upload-list-item-info {
-    display: none
+    display: none;
+    background-color: rgb(238, 77, 45);
   }
 `

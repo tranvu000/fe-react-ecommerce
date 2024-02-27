@@ -117,7 +117,7 @@ const SignInPage = () => {
               onClick={handleSignIn}
               size={40}
               styleButton={{ 
-                background: 'rgb(255, 57, 69)',
+                background: 'rgb(238, 77, 45)',
                 height: '48px',
                 width: '100%',
                 border: 'none',

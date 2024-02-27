@@ -50,12 +50,14 @@ const CardComponent = (props) => {
           <span>{rating}</span>
           <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)' }} />
         </span>
-        <WrapperStyleTextSell>| Đã bán {selled || 1000}+</WrapperStyleTextSell>
+        <WrapperStyleTextSell>
+          {countInStock === 0 ? '| Đã bán hết hàng' : (selled ? `| Đã bán ${selled}+` : '| Sản phẩm mới ra')}
+        </WrapperStyleTextSell>
       </WrapReportText>
       <WrapPriceText>
         <span style={{marginRight: '8px'}}>{convertPrice(price)}</span>
         <WrapDiscountText>
-          - {discount || 5} %
+          {discount ? `- ${discount} %` : null}
         </WrapDiscountText>
       </WrapPriceText>
       

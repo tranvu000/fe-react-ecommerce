@@ -189,24 +189,25 @@ const AdminUser = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => a.name.localeCompare(b.name),
       ...getColumnSearchProps('name')
     },
     {
       title: 'Email',
       dataIndex: 'email',
-      sorter: (a, b) => a.email.length - b.email.length,
+      sorter: (a, b) => a.email.localeCompare(b.email),
       ...getColumnSearchProps('email')
     },
     {
       title: 'Phone',
       dataIndex: 'phone',
-      sorter: (a, b) => a.phone - b.phone,
+      sorter: (a, b) => a.phone.localeCompare(b.phone),
       ...getColumnSearchProps('phone')
     },
     {
       title: 'Admin',
       dataIndex: 'isAdmin',
+      sorter: (a, b) => a.isAdmin.localeCompare(b.isAdmin),
       filters: [
         {
           text: 'True',
@@ -216,12 +217,13 @@ const AdminUser = () => {
           text: 'False',
           value: 'false',
         },
-      ]
+      ],
+      ...getColumnSearchProps('isAdmin')
     },
     {
       title: 'Address',
       dataIndex: 'address',
-      sorter: (a, b) => a.address.length - b.address.length,
+      sorter: (a, b) => a.address.localeCompare(b.address),
       ...getColumnSearchProps('address')
     },
     {
@@ -234,7 +236,10 @@ const AdminUser = () => {
     return {
       ...user,
       key: user._id,
-      isAdmin: user.isAdmin ? 'TRUE' : 'FALSE'
+      name: user.name || '',
+      phone: user.phone || '',
+      isAdmin: user.isAdmin ? 'True' : 'False',
+      address: user.address || ''
     };
   });
 
