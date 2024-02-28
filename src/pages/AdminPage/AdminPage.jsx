@@ -109,11 +109,11 @@ const AdminPage = () => {
           onClick={handleOnClick}
         />
         <div style={{ flex: 1, padding: '15px 0 15px 15px' }}>
-          <Loading isLoading={memoCount && Object.keys(memoCount) &&  Object.keys(memoCount).length !== 3}>
+          {/* <Loading isLoading={memoCount && Object.keys(memoCount) &&  Object.keys(memoCount).length !== 3}> */}
             {!keySelected && (
               <CustomizedContent data={memoCount} colors={COLORS} setKeySelected={setKeySelected} />
             )}
-          </Loading>
+          {/* </Loading> */}
           {renderPage(keySelected)}
         </div>
       </div>
