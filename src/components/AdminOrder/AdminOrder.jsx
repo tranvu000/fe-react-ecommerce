@@ -157,8 +157,53 @@ const AdminOrder = () => {
     {
       title: 'Total price',
       dataIndex: 'totalPrice',
-      sorter: (a, b) => a.totalPrice.localeCompare(b.totalPrice),
-      ...getColumnSearchProps('totalPrice')
+      sorter: (a, b) => {
+        const totalPriceA = parseInt(a.totalPrice.split(' ')[0].replace(/[,.]/g, ''), 10);
+        const totalPriceB = parseInt(b.totalPrice.split(' ')[0].replace(/[,.]/g, ''), 10);
+        return totalPriceA - totalPriceB;
+      },
+      filters: [
+        {
+          text: 'Dưới 100.000',
+          value: '<100000',
+        },
+        {
+          text: 'Từ 100.000 - 500.000',
+          value: '100000-500000',
+        },
+        {
+          text: 'Từ 500.000 - 2.000.000',
+          value: '500000-2000000',
+        },
+        {
+          text: 'Từ 2.000.000 - 15.000.000',
+          value: '2000000-15000000',
+        },
+        {
+          text: 'Từ 15.000.000 - 50.000.000',
+          value: '15000000-50000000',
+        },
+        {
+          text: 'Trên 50.000.000',
+          value: '>50000000',
+        },
+      ],
+      onFilter: (value, record) => {
+        const totalPrice = parseInt(record.totalPrice.split(' ')[0].replace(/[,.]/g, ''), 10);
+        if (value === '<100000') {
+          return totalPrice >= 0 && totalPrice < 100000;
+        } else if (value === '100000-500000') {
+          return totalPrice >= 100000 && totalPrice <= 500000;
+        } else if (value === '500000-2000000') {
+          return totalPrice >= 500000 && totalPrice <= 2000000;
+        } else if (value === '2000000-15000000') {
+          return totalPrice >= 2000000 && totalPrice <= 15000000;
+        } else if (value === '15000000-50000000') {
+          return totalPrice >= 15000000 && totalPrice <= 50000000;
+        } else if (value === '>50000000') {
+          return totalPrice > 50000000;
+        };
+      },
     },
   ];
 
