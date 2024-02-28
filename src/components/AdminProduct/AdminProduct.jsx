@@ -236,7 +236,11 @@ const AdminProduct = () => {
     {
       title: 'Price',
       dataIndex: 'price',
-      sorter: (a, b) => a.price - b.price,
+      sorter: (a, b) => {
+        const priceA = parseInt(a.price.split(' ')[0].replace(/[,.]/g, ''), 10);
+        const priceB = parseInt(b.price.split(' ')[0].replace(/[,.]/g, ''), 10);
+        return priceA - priceB;
+      },
       filters: [
         {
           text: 'Dưới 100.000',
@@ -264,8 +268,7 @@ const AdminProduct = () => {
         },
       ],
       onFilter: (value, record) => {
-        const price = record.price;
-
+        const price = parseInt(record.price.split(' ')[0].replace(/[,.]/g, ''), 10);
         if (value === '<100000') {
           return price >= 0 && price < 100000;
         } else if (value === '100000-500000') {

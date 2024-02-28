@@ -40,7 +40,7 @@ const TableComponent = (props) => {
   
   return (
     <>
-      <Loading isLoading={isLoading}>
+      {/* <Loading isLoading={isLoading}> */}
         {!!rowSelectedKeys.length && (
           <div style={{
             background: 'rgb(238, 77, 45)',
@@ -64,7 +64,7 @@ const TableComponent = (props) => {
           dataSource={dataSource}
           {...props}
         />
-      </Loading>
+      {/* </Loading> */}
     </>
   );
 };
